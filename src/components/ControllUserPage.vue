@@ -23,6 +23,28 @@
                 </div>
                 <div class="flex-1 p-10">
                 <div class="h-72 w-auto bg-white rounded-lg shadow-lg">
+                    <div class="w-auto flex flex-row py-5 px-2">
+                        <div class="w-auto px-20 font-semibold">
+                            email
+                        </div>
+                        <div class="w-auto  font-semibold">
+                            username
+                        </div>
+                    </div>
+                    <hr>
+                    <ul>
+                        <li v-for="todo in todos":key="todos.id" class="p-2">
+                            <div class="w-auto flex flex-row py-5">
+                                <div class="w-auto px-4" >
+                                    {{ todo.email }}
+                                </div>
+                                <div class="w-auto px-4">
+                                    {{ todo.username }}
+                                </div>
+                            </div>
+                            <hr>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -35,6 +57,14 @@
     export default{
         components:{
             PageHead
+        },
+        data(){
+            return{
+                todos : [
+                { id: 1, email: 'email1@example.com' ,username:'User1'},
+                { id: 2, email: 'email2@example.com',username:'User2'},
+                { id: 3, email: 'email3@example.com',username:'User3'}]
+            }
         }
     }
 </script>
