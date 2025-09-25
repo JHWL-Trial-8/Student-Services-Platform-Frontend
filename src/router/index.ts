@@ -104,7 +104,7 @@ router.beforeEach((to, from, next) => {
   
   try {
     // 检查管理员权限
-    if (adminPath.includes(to.path) && role !== 'admin') {
+    if (adminPath.includes(to.path) && !(role === 'admin'|| role === 'superadmin')) {
       // 非管理员尝试访问管理员页面
       next('/youcantin'); // 或重定向到无权限页面
       return;

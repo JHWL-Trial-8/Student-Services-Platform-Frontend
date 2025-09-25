@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        <footer class="text-center py-4 bg-white border-t border-gray-200 flex-shrink-0">JHWL-Trial-8制作
+        <footer class="text-center py-4 bg-white border-t border-gray-200 flex-shrink-0 h-auto">JHWL-Trial-8制作
         </footer>
     </div>
 </template>
