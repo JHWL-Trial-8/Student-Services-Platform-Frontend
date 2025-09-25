@@ -5,7 +5,7 @@
         <div class=" p-10 w-80"><!--侧边栏-->
             <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
                     border-red-400 border-t-2 rounded-lg shadow-lg">
-                <router-link to="/" class="py-4 my-2 text-center font-semibold">主页</router-link>
+                <router-link to="/home" class="py-4 my-2 text-center font-semibold">主页</router-link>
                 <hr>
                 <router-link to="/user" class="py-4 my-2 text-center font-semibold">个人信息</router-link>
                 <hr>
@@ -22,7 +22,7 @@
                 </div>
                 </div>
                 <div class="flex-1 p-10">
-                <div class="h-72 w-auto bg-white rounded-lg shadow-lg">
+                <div class="h-auto w-auto bg-white rounded-lg shadow-lg">
                     <div class="w-auto flex flex-row py-5 px-2">
                         <div class="w-auto px-20 font-semibold">
                             email
@@ -33,18 +33,24 @@
                     </div>
                     <hr>
                     <ul>
-                        <li v-for="todo in todos":key="todos.id" class="p-2">
+                        <li v-for="user in userinformation":key="userinformation.id" class="p-2">
                             <div class="w-auto flex flex-row py-5">
                                 <div class="w-auto px-4" >
-                                    {{ todo.email }}
+                                    {{ user.email }}
                                 </div>
                                 <div class="w-auto px-4">
-                                    {{ todo.username }}
+                                    {{ user.username }}
                                 </div>
                             </div>
                             <hr>
                         </li>
                     </ul>
+                    <div class="p-4">
+                        <button class="w-24 h-12 bg-blue-500 rounded px-2 text-white
+                        hover:bg-blue-700 hover:text-black" @click="compelete()">
+                         保存
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,12 +64,17 @@
         components:{
             PageHead
         },
-        data(){
-            return{
-                todos : [
+        data() {
+            return {
+                userinformation : [
                 { id: 1, email: 'email1@example.com' ,username:'User1'},
                 { id: 2, email: 'email2@example.com',username:'User2'},
                 { id: 3, email: 'email3@example.com',username:'User3'}]
+            }
+        },
+        methods:{
+            compelete(){
+                localStorage.setItem('userinformation',JSON.stringify(this.userinformation))
             }
         }
     }
