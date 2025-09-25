@@ -46,9 +46,9 @@ import PageHead from './PageHead.vue';
     export default{
         data(){
             return{
-                username:localStorage.getItem('email'),
+                username:localStorage.getItem('username'),
                 email:localStorage.getItem('email'),
-                acadymic:localStorage.getItem('email')
+                acadymic:localStorage.getItem('acadymic')
             }
         },
         components:{

@@ -45,14 +45,13 @@
     import PageFoot from './PageFoot.vue';
     localStorage.setItem('access_token','');
     localStorage.setItem('access_type','');
-    localStorage.setItem('role','admin');
+    localStorage.setItem('role','superadmin');
     localStorage.setItem('username','User');
     localStorage.setItem('email','eamil@example.com');
     localStorage.setItem('acadymic','computerscience');
     export default{
         methods:{
             logg(){
-                console.log('username')
                 this.$router.push('/log');
             }
         },

@@ -21,11 +21,10 @@
                 <hr>
                 <router-link to="/up" class="py-4 my-2 text-center font-semibold">提交问题反馈</router-link>
                 <hr>
-                <div v-if="isAdmin">
-                    <router-link to="/controlluser" class="py-4 my-2 text-center font-semibold">用户账号管理</router-link>
-                </div>
+                <router-link to="/controlluser" class="py-4 my-2 text-center font-semibold" v-if="role === 'superadmin'">用户账号管理</router-link>
                 <hr>
-                <router-link to="/feedbackpage" class="py-4 my-2 text-center font-semibold">处理信息</router-link>
+                <router-link to="/feedbackpage" class="py-4 my-2 text-center font-semibold" v-if="role === 'admin'">处理信息</router-link>
+                <router-link to="/feedbackpage" class="py-4 my-2 text-center font-semibold" v-if="role === 'superadmin'">处理信息</router-link>
                 <hr>
                 <div class="w-auto rounded-md p-4"><!--信息显示-->
                 <img src="../assets/JHWL-Trial-8.jpg" alt="头像" class="flex">
@@ -44,20 +43,11 @@
 </template>
 <script>
     import PageFoot from './PageFoot.vue';
-    import { ref, watchEffect, computed } from 'vue';
-    const role = ref(localStorage.getItem('role'));
-    // 监听 localStorage 变化（跨标签页同步）
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'role') {
-            role.value = e.newValue;
-        }
-    });
-    const isAdmin = computed(() => role.value === 'admin');
     export default{
         data(){
             return{
                 username:localStorage.getItem('username'),
-                role:computed(role=>(localStorage.getItem('role')==='admin'))
+                role:localStorage.getItem('role')
             };
         },
         components:{
