@@ -1,4 +1,4 @@
-<template>
+<template><!--这个是页面头元素-->
     <header class="bg-white shadow-sm py-4 px-6 h-20 w-full">
             <div class="flex items-center">
                 <!-- 徽标 -->

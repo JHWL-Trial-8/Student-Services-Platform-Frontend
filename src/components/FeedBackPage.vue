@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col min-h-screen">
-        <PageHead></PageHead>
+        <PageHead></PageHead><!--这些内容和主页相似，不注释了-->
         <div class="flex-1 flex overflow-hidden">
         <div class=" p-10 w-80"><!--侧边栏-->
             <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
@@ -18,11 +18,11 @@
                 </div>
                 <div class="py-4 my-2 text-center font-semibold">
                     Username
-                </div>
+                </div><!--这里好像需要{ {username} }算一个bug，之后再修-->
                 </div>
                 </div>
                 <div class="flex-1 p-10">
-                <div class="h-72 w-auto bg-white rounded-lg shadow-lg">
+                <div class="h-72 w-auto bg-white rounded-lg shadow-lg"><!--加入管理员反馈的界面，还没写-->
                 </div>
             </div>
         </div>

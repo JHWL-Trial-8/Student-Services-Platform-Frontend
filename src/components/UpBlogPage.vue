@@ -1,7 +1,6 @@
 <template>
     <div class="h-full w-full bg-gray-50 flex flex-col">
-        <PageHead></PageHead>
-        
+        <PageHead></PageHead><!--页面头-->
         <div class=" min-h-screen min-w-full bg-gray-100 shadow-md rounded-md p-10 flex-1 flex overflow-hidden">
             <div class=" w-80"><!--侧边栏-->
             <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
@@ -19,7 +18,7 @@
                 </div>
                 <div class="py-4 my-2 text-center font-semibold">
                     Username
-                </div>
+                </div><!--好像需要改成{ { username } }，算一个bug，之后再改-->
                 </div>
                 </div>
                 <div class="flex-1 p-10">
@@ -27,18 +26,18 @@
                         <textarea name="shurukuang" id="shurukuang" placeholder="请输入问题描述" v-model="text"
                             class=" w-auto h-full flex-row p-10 border focus:outline-none 
                             focus:ring-2 focus:ring-blue-600 rounded-sm m-10"></textarea>
-                    <div>
+                    <div><!--大输入框-->
                 <input type="file" @change="handleFileUpload" class="px-5"/>
-                </div>
+                </div><!--图片文件提交按钮，可能需要判断上交的是否是图片文件？-->
                 <div class="flex  justify-center items-center h-11">
                     <button class=" bg-blue-400 text-black hover:bg-blue-800 over:text-white 
                         rounded-sm w-16 h-8 shadow-sm" @click="submitFile">提交</button>
-                </div>
+                </div><!--提交按钮，之后触发判定，免得有人啥也不写就交了-->
                 </div>
             </div> 
         </div>
         <footer class="text-center h-10">JHWL-Trial-8制作
-        </footer>
+        </footer><!--脚标-->
     </div>
 </template>
 <script>
@@ -55,11 +54,11 @@
         },
     methods: {
         handleFileUpload(event) {
-        this.selectedFile = event.target.files[0]; // 获取选中的文件
+        this.selectedFile = event.target.files[0]; // 获取选中的文件，这一段是从AI那里学来的
     },
     submitFile() {
         if(!this.text){
-            alert("请输入描述！");
+            alert("请输入描述！");//防止有人提交空白内容
             return;
         }
         const formData = new FormData();

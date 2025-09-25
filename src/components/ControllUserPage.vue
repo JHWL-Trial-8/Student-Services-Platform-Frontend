@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col min-h-screen">
-        <PageHead></PageHead>
+        <PageHead></PageHead><!--这些内容和主页相似，不注释了，可以看主页的注释-->
         <div class="flex-1 flex overflow-hidden">
         <div class=" p-10 w-80"><!--侧边栏-->
             <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
@@ -22,14 +22,14 @@
                 </div>
                 </div>
                 <div class="flex-1 p-10">
-                <div class="h-auto w-auto bg-white rounded-lg shadow-lg">
+                <div class="h-auto w-auto bg-white rounded-lg shadow-lg"><!--这里显示用户信息，主要是邮箱和用户名-->
                     <div class="w-auto flex flex-row py-5 px-2">
                         <div class="w-auto px-20 font-semibold">
                             email
                         </div>
                         <div class="w-auto  font-semibold">
                             username
-                        </div>
+                        </div><!--界面标题，表格头-->
                     </div>
                     <hr>
                     <ul>
@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="w-auto px-4">
                                     {{ user.username }}
-                                </div>
+                                </div><!--通过循环输出用户信息-->
                             </div>
                             <hr>
                         </li>
@@ -49,13 +49,13 @@
                         <button class="w-24 h-12 bg-blue-500 rounded px-2 text-white
                         hover:bg-blue-700 hover:text-black" @click="compelete()">
                          保存
-                        </button>
+                        </button><!--保存按钮，打算是先本地存储，之后再上传-->
                     </div>
                 </div>
             </div>
         </div>
         <footer class="text-center py-4 bg-white border-t border-gray-200 flex-shrink-0 h-auto">JHWL-Trial-8制作
-        </footer>
+        </footer><!--脚标-->
     </div>
 </template>
 <script>
@@ -69,12 +69,12 @@
                 userinformation : [
                 { id: 1, email: 'email1@example.com' ,username:'User1'},
                 { id: 2, email: 'email2@example.com',username:'User2'},
-                { id: 3, email: 'email3@example.com',username:'User3'}]
+                { id: 3, email: 'email3@example.com',username:'User3'}]//用户信息，之后可能就是网上读取了
             }
         },
         methods:{
             compelete(){
-                localStorage.setItem('userinformation',JSON.stringify(this.userinformation))
+                localStorage.setItem('userinformation',JSON.stringify(this.userinformation))//先本地存储
             }
         }
     }
