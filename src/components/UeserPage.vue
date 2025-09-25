@@ -2,8 +2,8 @@
     <div class="h-full w-full bg-gray-50 flex justify-center flex-col">
         <PageHead></PageHead><!--页面头-->
             <div class="flex flex-col items-center my-12">
-                <div class="relative group"><!--用户头像展示，之后需要把这个做成按钮，或者在下方添加一个能上传图片文件的按钮。。-->
-                    <div class="w-32 h-32 rounded-full overflow-hidden shadow-sm"><!--。。用来上传用户的头像-->
+                <div class="relative group">
+                    <div class="w-32 h-32 rounded-full overflow-hidden shadow-sm">
                         <img src="../assets/JHWL-Trial-8.jpg"
                             class="w-full h-full object-cover"
                             alt="用户头像"/><!--当然，之后头像文件肯定是要保存在后端的，具体实现还要学习一下-->

@@ -10,7 +10,7 @@ import YouCantIn from '@/components/YouCantIn.vue'
 import RegesterPage from '@/components/RegesterPage.vue'
 import HomePageIn from '@/components/HomePageIn.vue'
 import NotLogin from '@/components/NotLogin.vue'
-import CompileUser from '@/components/CompileUser.vue'
+import CompileUser from '@/components/CompileUser.vue'//导入组件，这个是用来实现页面跳转的重要文件
 declare module 'vue-router' {
   interface RouteMeta {
     requiresAuth: boolean
