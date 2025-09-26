@@ -142,6 +142,51 @@
                 </div>
             </div>
         </div>
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="change_if">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h2 class="text-xl font-bold py-2" v-if="!change">您还没有做出任何修改！</h2>
+            <h2 class="text-xl font-bold py-2" v-if="change">确认修改？此操作不可逆！</h2>
+            <hr>
+                <div class="p-6">
+                    <div class="flex justify-end space-x-3">
+                        <button 
+                            type="button" @click="change_if=false" v-if="change"
+                            class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                            hover:bg-gray-400 transition">
+                            取消
+                        </button>
+                        <button 
+                            type="submit" @click="confirmupload()" v-if="change"
+                            class="bg-green-500 text-white py-2 px-4 rounded
+                            hover:bg-green-600 transition">
+                                提交
+                        </button>
+                        <button 
+                            type="button" @click="change_if=false" v-if="!change"
+                            class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                            hover:bg-gray-400 transition">
+                            返回
+                        </button>
+                    </div>       
+                </div>
+            </div>
+        </div>
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="change_done">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h2 class="text-xl font-bold py-2">操作成功</h2>
+            <hr>
+                <div class="p-6">
+                    <div class="flex justify-end space-x-3">
+                        <button 
+                            type="button" @click="change_done=false"
+                            class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                            hover:bg-gray-400 transition">
+                            返回
+                        </button>
+                    </div>       
+                </div>
+            </div>
+        </div>
         <footer class="text-center py-4 bg-white border-t border-gray-200 flex-shrink-0 h-auto">JHWL-Trial-8制作
         </footer><!--脚标-->
     </div>
@@ -154,14 +199,10 @@
         },
         data() {
             return {
-                userinformationtmp : [
-                { id: 1, email: 'email1@example.com',username:'User1',role:'student'},
+                userinformationtmp : JSON.parse(localStorage.getItem('userinformation'))||
+                [{ id: 1, email: 'email1@example.com',username:'User1',role:'student'},
                 { id: 2, email: 'email2@example.com',username:'User2',role:'admin'},
                 { id: 3, email: 'email3@example.com',username:'User3',role:'admin'}],//用户信息，之后可能就是网上读取了
-                userinformation : [
-                { id: 1, email: 'email1@example.com',username:'User1',role:'student'},
-                { id: 2, email: 'email2@example.com',username:'User2',role:'admin'},
-                { id: 3, email: 'email3@example.com',username:'User3',role:'admin'}],
                 change:false,
                 add: false,
                 newUser: {
@@ -169,19 +210,18 @@
                     email: '',
                     role: 'user'
                 },
-                add:false
+                add:false,
+                change_if:false,
+                change_done:false,
             }
         },
         methods:{
             compelete(){
                 if(this.change){
-                    if(confirm('您确定要这么操作吗，此操作不可逆！')){
-                        this.userinformation=this.userinformationtmp
-                        localStorage.setItem('userinformation',JSON.stringify(this.userinformation))//先本地存储
-                    }
+                    this.change_if=true
                 }
                 else{
-                    alert('您还没有进行操作')
+                    this.change_if=true
                 }
             },
             removeuser(userid){
@@ -199,6 +239,7 @@
                     user.role = 'student';
                 }
                 this.change=true
+                this.change_done=true
             },
             adduser(){
                 this.add=true
@@ -210,6 +251,13 @@
                 this.newUser = { username: '', email: '', role: 'user' };
                 this.add = false;
                 this.change=true
+                this.change_done=true
+            },
+            confirmupload(){
+                this.change_if=false
+                this.change_done=true
+                this.userinformation=this.userinformationtmp
+                localStorage.setItem('userinformation',JSON.stringify(this.userinformation))//先本地存储
             }
         }
     }
