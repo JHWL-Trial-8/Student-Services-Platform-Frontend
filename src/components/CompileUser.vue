@@ -59,8 +59,13 @@ import PageHead from './PageHead.vue';
                 if(this.username !=='') localStorage.setItem('username',this.username)
                 if(!this.email !=='') localStorage.setItem('email',this.email)
                 if(!this.acadymic !=='') localStorage.setItem('acadymic',this.acadymic)
-                alert("保存成功")//存储信息，需要一个判断输入是否合法的函数，然后弹窗提示
-                this.$router.push('/user');//跳转会个人信息界面
+                const result=confirm("确认修改？")
+                if(result){
+                    alert("保存成功")
+                    this.$router.push('/user');
+                }
+                //存储信息，需要一个判断输入是否合法的函数，然后弹窗提示
+                //跳转会个人信息界面
             },
         }
     }

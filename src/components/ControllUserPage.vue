@@ -23,33 +23,77 @@
                 </div>
                 <div class="flex-1 p-10">
                 <div class="h-auto w-auto bg-white rounded-lg shadow-lg"><!--这里显示用户信息，主要是邮箱和用户名-->
-                    <div class="w-auto flex flex-row py-5 px-2">
-                        <div class="w-auto px-20 font-semibold">
+                    <div class="w-auto flex flex-row py-5 px-2 justify-between">
+                        <div></div>
+                        <div class="w-auto font-semibold">
                             email
                         </div>
                         <div class="w-auto  font-semibold">
                             username
                         </div><!--界面标题，表格头-->
+                        <div class="w-auto  font-semibold">
+                            role
+                        </div>
+                        <div></div>
+                        <div></div>
+                        <div class="w-auto  font-semibold">
+                            操作
+                        </div>
+                        <div></div>
                     </div>
                     <hr>
                     <ul>
-                        <li v-for="user in userinformation":key="userinformation.id" class="p-2">
-                            <div class="w-auto flex flex-row py-5">
-                                <div class="w-auto px-4" >
+                        <li v-for="user in userinformationtmp":key="userinformationtmp.id" class="p-2">
+                            <div class="w-auto flex flex-row py-5 justify-between">
+                                <div></div>
+                                <div class="w-auto p-4" >
                                     {{ user.email }}
                                 </div>
-                                <div class="w-auto px-4">
+                                <div></div>
+                                <div></div>
+                                <div class="w-auto p-4">
                                     {{ user.username }}
                                 </div><!--通过循环输出用户信息-->
+                                <div></div>
+                                <div class="w-auto px-20 py-4">
+                                    {{ user.role }}
+                                </div>
+                                <div class="py-2 px-20 flex flex-row">
+                                    <div class="px-2">
+                                        <!-- 修改按钮文本和样式根据当前角色 -->
+                                        <button 
+                                            class="w-24 h-12 rounded py-2 text-white"
+                                            :class="user.role === 'admin' ? 'bg-blue-500 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-700'"
+                                            @click="changerole(user)">
+                                            {{ user.role === 'admin' ? '设为用户' : '设为管理员' }}
+                                        </button>
+                                    </div>
+                                    <button class="w-24 h-12 bg-red-500 rounded py-2  text-white
+                                    hover:bg-red-700 hover:text-black" @click="removeuser(user)">
+                                        删除
+                                    </button>
+                                </div>
                             </div>
                             <hr>
                         </li>
                     </ul>
-                    <div class="p-4">
+                    <div class="p-4 flex flex-row">
+                        <div class="px-4">
+                            <button class="w-24 h-12 bg-gray-500 rounded px-2 text-white
+                        hover:bg-gray-700 hover:text-black" @click="restart()">
+                         取消
+                        </button>
+                        </div>
                         <button class="w-24 h-12 bg-blue-500 rounded px-2 text-white
                         hover:bg-blue-700 hover:text-black" @click="compelete()">
                          保存
                         </button><!--保存按钮，打算是先本地存储，之后再上传-->
+                        <div class="px-4">
+                            <button class="w-24 h-12 bg-green-500 rounded px-2 text-white
+                        hover:bg-green-700 hover:text-black" @click="restart()">
+                         取消
+                        </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -66,16 +110,51 @@
         },
         data() {
             return {
+                userinformationtmp : [
+                { id: 1, email: 'email1@example.com',username:'User1',role:'student'},
+                { id: 2, email: 'email2@example.com',username:'User2',role:'admin'},
+                { id: 3, email: 'email3@example.com',username:'User3',role:'admin'}],//用户信息，之后可能就是网上读取了
                 userinformation : [
-                { id: 1, email: 'email1@example.com' ,username:'User1'},
-                { id: 2, email: 'email2@example.com',username:'User2'},
-                { id: 3, email: 'email3@example.com',username:'User3'}]//用户信息，之后可能就是网上读取了
+                { id: 1, email: 'email1@example.com',username:'User1',role:'student'},
+                { id: 2, email: 'email2@example.com',username:'User2',role:'admin'},
+                { id: 3, email: 'email3@example.com',username:'User3',role:'admin'}],
+                change:false,
+                add: false,
+                newUser: {
+                    username: '',
+                email: '',
+                role: 'user'
+            },
             }
         },
         methods:{
             compelete(){
-                localStorage.setItem('userinformation',JSON.stringify(this.userinformation))//先本地存储
-            }
+                if(this.change){
+                    if(confirm('您确定要这么操作吗，此操作不可逆！')){
+                        this.userinformation=this.userinformationtmp
+                        localStorage.setItem('userinformation',JSON.stringify(this.userinformation))//先本地存储
+                    }
+                }
+                else{
+                    alert('您还没有进行操作')
+                }
+            },
+            removeuser(userid){
+                this.userinformationtmp=this.userinformationtmp.filter((t)=>t!=userid)
+                this.change=true
+            },
+            restart(){
+                this.userinformationtmp=this.userinformation
+                this.change=false
+            },
+            changerole(user){
+                if (user.role === 'student') {
+                    user.role = 'admin';
+                } else {
+                    user.role = 'student';
+                }
+                this.change=true
+            },
         }
     }
 </script>
