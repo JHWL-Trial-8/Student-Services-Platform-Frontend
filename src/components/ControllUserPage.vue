@@ -199,10 +199,14 @@
         },
         data() {
             return {
-                userinformationtmp : JSON.parse(localStorage.getItem('userinformation'))||
-                [{ id: 1, email: 'email1@example.com',username:'User1',role:'student'},
+                userinformationtmp : [
+                { id: 1, email: 'email1@example.com',username:'User1',role:'student'},
                 { id: 2, email: 'email2@example.com',username:'User2',role:'admin'},
                 { id: 3, email: 'email3@example.com',username:'User3',role:'admin'}],//用户信息，之后可能就是网上读取了
+                userinformation : [
+                { id: 1, email: 'email1@example.com',username:'User1',role:'student'},
+                { id: 2, email: 'email2@example.com',username:'User2',role:'admin'},
+                { id: 3, email: 'email3@example.com',username:'User3',role:'admin'}],
                 change:false,
                 add: false,
                 newUser: {
