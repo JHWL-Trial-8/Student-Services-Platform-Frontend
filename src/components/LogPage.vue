@@ -22,6 +22,9 @@
                             placeholder="Password" v-model="Password" required>
                         </div>
                     </div>
+                    <div class="flex text-sm text-red-500 px-20" v-if="iserror">
+                        {{message}}
+                    </div>
                     <div class="flex  justify-center items-center h-11">
                         <button class=" bg-red-500  text-black hover:bg-red-700 hover:text-white 
                             rounded-sm w-16 h-8 shadow-sm" type="submit">登录</button><!--登录按钮，绑定了登录事件login-->
@@ -58,14 +61,16 @@
                 Password:'',
                 emailValid: false,
                 access_token:'',
-                userinformation:''
+                userinformation:'',
+                iserror:false,
+                message:''
             }
         },
         methods:{
             login(){
                 axios.post('http://46.203.124.16:8080/api/v1/auth/login',{
-                    email:'user@example.com',
-                    password:'pa$$word'
+                    email:this.Email,
+                    password:this.Password
                 }).then(response=>{
                     const userinformation=response.data
                     localStorage.setItem('access_token',userinformation.access_token)
@@ -74,7 +79,8 @@
                     
                 })
                 .catch(error=>{
-                    console.log(error)
+                    this.iserror=true
+                    this.message=error.response.data.error
                 })
             },
             register(){
