@@ -17,7 +17,7 @@
                 <img src="../assets/JHWL-Trial-8.jpg" alt="头像" class="flex">
                 </div>
                 <div class="py-4 my-2 text-center font-semibold">
-                    Username
+                    {{ Username }}
                 </div>
                 </div>
                 </div>
@@ -103,42 +103,41 @@
             <h2 class="text-xl font-bold">添加用户</h2>
             <hr>
                 <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-4">用户信息</h3>
-                            <form @submit.prevent="submitForm">
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 mb-2" for="name">姓名</label>
-                                    <input 
-                                        id="name" 
-                                        type="text" 
-                                        v-model="newUser.username"
-                                        class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                                        required
-                                    >
-                                </div>
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 mb-2" for="email">邮箱</label>
-                                    <input 
-                                        id="email" 
-                                        type="email"
-                                        v-model="newUser.email"
-                                        class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                                        required>
-                                </div>
-                                <div class="flex justify-end space-x-3">
-                                    <button 
-                                        type="button" @click="add=false"
-                                        class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
-                                        hover:bg-gray-400 transition">
-                                        取消
-                                    </button>
-                                    <button 
-                                        type="submit" @click="addnewuser()"
-                                        class="bg-green-500 text-white py-2 px-4 rounded
-                                        hover:bg-green-600 transition">
-                                        提交
-                                    </button>
-                                </div>
-                        </form>
+                    <h3 class="text-xl font-semibold mb-4">用户信息</h3>
+                    <form @submit.prevent="addnewuser">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2" for="name">姓名</label>
+                            <input 
+                                id="name" 
+                                type="text" 
+                                v-model="newUser.username"
+                                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                                required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2" for="email">邮箱</label>
+                            <input 
+                                id="email" 
+                                type="email"
+                                v-model="newUser.email"
+                                class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                                required>
+                        </div>
+                        <div class="flex justify-end space-x-3">
+                            <button 
+                                type="button" @click="add=false"
+                                class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                                hover:bg-gray-400 transition">
+                                取消
+                            </button>
+                            <button 
+                                type="submit"
+                                class="bg-green-500 text-white py-2 px-4 rounded
+                                hover:bg-green-600 transition">
+                                提交
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -217,6 +216,7 @@
                 add:false,
                 change_if:false,
                 change_done:false,
+                Username:localStorage.getItem('username')
             }
         },
         methods:{
