@@ -6,9 +6,7 @@
                     <img src="../assets/JHWL-Trial-8.jpg" alt="徽标" class="flex">
                 </div>
                 <!-- 标题 -->
-                    <router-link to="/home">
-                        <h1 class="text-xl font-semibold text-gray-900">学生服务平台</h1>
-                    </router-link>
+                    <h1 class="text-xl font-semibold text-gray-900">学生服务平台</h1>
                 </div>
         </header>
 </template>
