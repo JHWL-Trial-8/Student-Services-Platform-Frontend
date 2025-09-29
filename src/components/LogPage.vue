@@ -83,13 +83,18 @@
                 }).then(response=>{
                     const userinformation=response.data
                     localStorage.setItem('access_token',userinformation.access_token)
-                    localStorage.setItem('role',userinformation.role)
                     axios.defaults.headers.common['Authorization'] = `Bearer ${userinformation.access_token}`;
                     this.$router.push('/home'); 
                 })
                 .catch(error=>{
                     this.iserror=true
                     this.message=error.response.data.error
+                })
+                axios.get('http://46.203.124.16:8080/api/v1/users/me').then(response=>{
+                    const userinformation=response.data
+                    console.log(userinformation.name)
+                    localStorage.getItem('user',userinformation.name)//增加了获取个人信息的环节
+                    localStorage.setItem('role',userinformation.role)
                 })
             },
             register(){
