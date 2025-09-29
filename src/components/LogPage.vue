@@ -75,8 +75,7 @@
                     const userinformation=response.data
                     localStorage.setItem('access_token',userinformation.access_token)
                     axios.defaults.headers.common['Authorization'] = `Bearer ${userinformation.access_token}`;
-                    this.$router.push('/home');
-                    
+                    this.$router.push('/home'); 
                 })
                 .catch(error=>{
                     this.iserror=true

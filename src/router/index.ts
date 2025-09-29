@@ -88,11 +88,10 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('access_token');
   
   // 检查用户是否已登录
-  if (!token || token === '') {
-    // 未登录，重定向到登录页
-    next('/notlogin');
-    return;
-  }
+  if (token==''){
+        next('/notlogin')
+        return
+    }
   
     // 检查角色数据是否存在
   if (role === null) {
