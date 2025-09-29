@@ -48,9 +48,11 @@
                     </div>
                     <div class="fixed inset-0 flex items-center justify-center z-50" v-if="complete">
                         <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-                            <div class="text-xl font-semibold py-2 text-center">注册成功,注册时间：{{ registertime }}</div>
+                            <div class="text-xl font-semibold py-2 text-center">注册成功!</div>
+                            <div class="text-lg font-semibold py-2 text-center 
+                            text-blue-300">注册时间：{{ registertime }}</div>
                             <hr>
-                            <div class="text-sm font-semibold py-2 
+                            <div class="text-sm py-2 
                             text-center text-gray-400">点击下方返回按钮回到登录页面</div>
                             <div class="flex  justify-center items-center h-11">
                                 <div class="p-4">

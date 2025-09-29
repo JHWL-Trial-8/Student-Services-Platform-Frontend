@@ -6,7 +6,7 @@
             <div class=" p-32">
                 <form @submit.prevent="login">
                     <div class="flex flex-col w-96 h-full p-10 bg-white
-                        border-red-400 border-t-2 rounded-lg shadow-lg"><!--登录框，其实是由侧栏的代码改过来的-->
+                        border-red-500 border-t-2 rounded-lg shadow-lg"><!--登录框，其实是由侧栏的代码改过来的-->
                     <div class="py-4 my-2 text-center font-semibold text-4xl">登录</div><!--登录框标题-->
                     <div class="flex py-4">
                         <div class=" h-10 w-80 py-1 rounded shadow-sm flex justify-center items-center">
@@ -26,13 +26,11 @@
                         {{message}}
                     </div>
                     <div class="flex  justify-center items-center h-11">
-                        <button class=" bg-red-500  text-black hover:bg-red-700 hover:text-white 
+                        <button class=" bg-blue-500  text-black hover:bg-blue-700 hover:text-white 
                             rounded-sm w-16 h-8 shadow-sm" type="submit">登录</button><!--登录按钮，绑定了登录事件login-->
-                        <div class="w-16 h-8"></div>
-                        <button class=" bg-red-500  text-black hover:bg-red-700 hover:text-white 
-                            rounded-sm w-16 h-8 shadow-sm " @click="register()">注册</button><!--注册按钮，绑定了页面跳转事件register-->
-                        </div>
                     </div>
+                    <RouterLink class="text-blue-600 text-sm text-center py-2" to="/register">还没有账号？注册账号</RouterLink><!--注册按钮，绑定了页面跳转事件register-->
+                </div>
                 </form><!--需要加入一个回车登录的功能，还在研究中-->
             </div>
         </div>
