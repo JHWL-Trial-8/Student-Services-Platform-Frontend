@@ -1,6 +1,17 @@
 <template>
     <div class="flex flex-col min-h-screen"><!--注册页面-->
-        <PageHead></PageHead><!--页面头，不过这个文件的名字好像打错了，反正不影响理解就行（ZestfulYK英语不好）-->
+        <header class="bg-white shadow-sm py-4 px-6 h-20 w-full"><!--页面头，包括我们组的徽标和网站的标题-->
+            <div class="flex items-center justify-between"><!--这个是用于使页面头元素正常排列的容器，没有别的作用-->
+                <div class="flex items-center"><!--徽标加标题-->
+                    <!-- 徽标 -->
+                    <div class="w-12 h-12 rounded-md mr-3"><!--图片样式-->
+                        <img src="../assets/JHWL-Trial-8.jpg" alt="徽标" class="flex">
+                    </div>
+                    <!-- 标题 -->
+                    <h1 class="text-xl font-semibold text-gray-900">学生服务平台</h1>
+                </div>
+            </div>
+        </header><!--页面头，不过这个文件的名字好像打错了，反正不影响理解就行（ZestfulYK英语不好）-->
         <div class="flex-1 flex flex-row-reverse overflow-hidden"><!--和登录界面一样的输入框-->
             <div class="flex-1 flex justify-end overflow-hidden">
             <div class=" p-32">

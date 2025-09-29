@@ -1,18 +1,6 @@
 <template><!--与上一个相似，只是边栏可以页面跳转-->
     <div class="h-full w-full bg-gray-50 flex flex-col">
-        <header class="bg-white shadow-sm py-4 px-6 h-20 w-full">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <!-- 徽标 -->
-                    <div class="w-12 h-12 rounded-md mr-3">
-                        <img src="../assets/JHWL-Trial-8.jpg" alt="徽标" class="flex">
-                    </div>
-                    <!-- 标题 -->
-                    <h1 class="text-xl font-semibold text-gray-900">学生服务平台</h1>
-                </div>
-            </div>
-        </header>
-
+        <PageHead></PageHead>
         <div class="flex-1 flex overflow-hidden">
         <div class=" p-10 w-80"><!--侧边栏-->
             <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
@@ -47,6 +35,7 @@
 </template>
 <script>
     import PageFoot from './PageFoot.vue';
+    import PageHead from './PageHead.vue';
     export default{
         data(){
             return{
@@ -55,7 +44,8 @@
             };
         },
         components:{
-            PageFoot//脚标导入，虽然只有一行但还是想这么写
+            PageFoot,//脚标导入，虽然只有一行但还是想这么写
+            PageHead
         }
     }
 </script>

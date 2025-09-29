@@ -93,13 +93,6 @@ router.beforeEach((to, from, next) => {
         return
     }
   
-    // 检查角色数据是否存在
-  if (role === null) {
-    // 角色数据丢失，清除 token 并重定向到登录页
-    localStorage.removeItem('access_token');
-    next('/log');
-    return;
-  }
   
   try {
     // 检查管理员权限

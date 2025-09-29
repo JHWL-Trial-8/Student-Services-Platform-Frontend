@@ -1,6 +1,17 @@
 <template>
     <div class="flex flex-col min-h-screen">
-        <PageHead></PageHead><!--页面头,但是页面头点击是到/home页面-->
+        <header class="bg-white shadow-sm py-4 px-6 h-20 w-full"><!--页面头，包括我们组的徽标和网站的标题-->
+            <div class="flex items-center justify-between"><!--这个是用于使页面头元素正常排列的容器，没有别的作用-->
+                <div class="flex items-center"><!--徽标加标题-->
+                    <!-- 徽标 -->
+                    <div class="w-12 h-12 rounded-md mr-3"><!--图片样式-->
+                        <img src="../assets/JHWL-Trial-8.jpg" alt="徽标" class="flex">
+                    </div>
+                    <!-- 标题 -->
+                    <h1 class="text-xl font-semibold text-gray-900">学生服务平台</h1>
+                </div>
+            </div>
+        </header><!--页面头,但是页面头点击是到/home页面-->
         <div class="flex-1 flex flex-row-reverse overflow-hidden"><!--可以考虑加上侧栏，但是为什么登录页面会要侧栏呢-->
             <div class="flex-1 flex justify-end overflow-hidden">
             <div class=" p-32">
@@ -72,6 +83,7 @@
                 }).then(response=>{
                     const userinformation=response.data
                     localStorage.setItem('access_token',userinformation.access_token)
+                    localStorage.setItem('role',userinformation.role)
                     axios.defaults.headers.common['Authorization'] = `Bearer ${userinformation.access_token}`;
                     this.$router.push('/home'); 
                 })

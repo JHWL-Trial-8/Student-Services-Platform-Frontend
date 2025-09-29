@@ -43,11 +43,6 @@
 </template>
 <script>
     import PageFoot from './PageFoot.vue';//引用脚标文件
-    localStorage.setItem('access_token','');//打算写初始化内容的，access_token是用来判断用户是否登录
-    localStorage.setItem('role','superadmin');//角色定义admin,superadmin,user
-    localStorage.setItem('username','User');//用户名，邮箱，学院，先设为默认值
-    localStorage.setItem('email','eamil@example.com');
-    localStorage.setItem('acadymic','computerscience');
     export default{
         methods:{
             logg(){
