@@ -60,7 +60,7 @@
                     <div class="fixed inset-0 flex items-center justify-center z-50" v-if="complete">
                         <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
                             <div class="text-xl font-semibold py-2 text-center">注册成功!</div>
-                            <div class="text-lg font-semibold py-2 text-center 
+                            <div class="text-lg py-2 text-center 
                             text-blue-300">注册时间：{{ registertime }}</div>
                             <hr>
                             <div class="text-sm py-2 
