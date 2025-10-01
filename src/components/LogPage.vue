@@ -92,7 +92,7 @@
                 })
                 axios.get('http://46.203.124.16:8080/api/v1/users/me').then(response=>{
                     const userinformation=response.data
-                    localStorage.getItem('user',userinformation.name)//增加了获取个人信息的环节
+                    localStorage.setItem('username',userinformation.name)//增加了获取个人信息的环节
                     localStorage.setItem('role',userinformation.role)
                 })
             },
