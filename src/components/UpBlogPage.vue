@@ -5,7 +5,7 @@
             <div class=" w-80"><!--侧边栏-->
                 <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
                         border-red-400 border-t-2 rounded-lg shadow-lg">
-                    <router-link to="/home" class="py-4 my-2 text-center font-semibold">主页</router-link>
+                    <router-link to="/home" class="py-4 my-2 text-center font-semibold">反馈记录</router-link>
                     <hr>
                     <router-link to="/user" class="py-4 my-2 text-center font-semibold">个人信息</router-link>
                     <hr>
@@ -27,11 +27,19 @@
                             <input type="text" v-model="title" class=" p-1"><!--标题-->
                         </div>
                     </div>
-                    <div class="flex py-4 px-2">
-                        <div class=" h-10 w-80 py-1 rounded shadow-sm flex">
-                            <div class="p-1">问题类型:   </div>
-                            <input type="text" v-model="category" class=" p-1"><!--标题-->
-                        </div>
+                    <div class="category-selector mb-4">
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">
+                            问题分类
+                        </label>
+                        <select v-model="category"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="" disabled>请选择问题分类</option>
+                            <option value="寝室用具">寝室用具</option>
+                            <option value="教室用具">教室用具</option>
+                            <option value="公共设施">公共设施</option>
+                            <option value="服务工作">服务工作</option>
+                            <option value="其他问题">其他问题</option>
+                        </select>
                     </div>
                     <textarea name="shurukuang" id="shurukuang" placeholder="请输入问题描述" v-model="text"
                         class=" w-auto h-full flex-row p-10 border focus:outline-none 
@@ -147,11 +155,17 @@
                 img:[],
                 uploadmessageerror:false,
                 title:'',
-                category:'',
                 isUrgent: false,
                 isAnonymous: false,
                 completetime:'',
-                success:false
+                success:false,
+                category: '',
+                categories: [
+                    { value: '寝室用具', label: '寝室用具' },
+                    { value: '教室用具', label: '教室用具' },
+                    { value: '公共设施', label: '公共设施' },
+                    { value: '服务工作', label: '服务工作' },
+                    { value: '其他问题', label: '其他问题' }]
             };
         },
         components:{

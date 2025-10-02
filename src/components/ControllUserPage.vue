@@ -5,11 +5,7 @@
         <div class=" p-10 w-80"><!--侧边栏-->
             <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
                     border-red-400 border-t-2 rounded-lg shadow-lg">
-                <router-link to="/home" class="py-4 my-2 text-center font-semibold">主页</router-link>
-                <hr>
                 <router-link to="/user" class="py-4 my-2 text-center font-semibold">个人信息</router-link>
-                <hr>
-                <router-link to="/up" class="py-4 my-2 text-center font-semibold">提交问题反馈</router-link>
                 <hr>
                 <router-link to="/feedbackpage" class="py-4 my-2 text-center font-semibold">处理反馈</router-link>
                 <hr>

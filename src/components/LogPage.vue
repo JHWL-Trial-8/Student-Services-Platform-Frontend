@@ -97,17 +97,17 @@
                     localStorage.setItem('role', userData.role);
       
                     // 5. 跳转页面
-                    this.$router.push('/home');
+                    if(role === 'STUDENT'){
+                        this.$router.push('/home');
+                    }
+                    else{
+                        this.$router.push('/feedbackpage');
+                    }
                 }
                 catch(error){
                     this.iserror=true
                     this.message=error.response.data.error
                 }
-                axios.get('http://46.203.124.16:8080/api/v1/users/me').then(response=>{
-                    const userinformation=response.data
-                    localStorage.setItem('username',userinformation.name)//增加了获取个人信息的环节
-                    localStorage.setItem('role',userinformation.role)
-                })
             },
             register(){
                 this.$router.push('/register')//跳传到/register注册页面

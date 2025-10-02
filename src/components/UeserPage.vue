@@ -5,7 +5,7 @@
         <div class=" p-10 w-80"><!--侧边栏-->
             <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
                     border-red-400 border-t-2 rounded-lg shadow-lg">
-                <RouterLink class="py-4 my-2 text-center font-semibold" to="/home">主页</RouterLink>
+                <RouterLink class="py-4 my-2 text-center font-semibold" to="/home">反馈记录</RouterLink>
                 <hr>
                 <RouterLink class="py-4 my-2 text-center font-semibold" to="/up">提交问题反馈</RouterLink><!--边栏内容示例，但是没有绑定页面跳转内容-->
                 <hr><!--分割线-->
