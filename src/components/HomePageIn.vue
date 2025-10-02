@@ -2,9 +2,9 @@
     <div class="h-full w-full bg-gray-50 flex flex-col">
         <PageHead></PageHead>
         <div class="flex-1 flex overflow-hidden">
-        <div class=" p-10 w-80"><!--侧边栏-->
+        <div class=" p-10 w-80">
             <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
-                    border-red-400 border-t-2 rounded-lg shadow-lg">
+                    border-red-400 border-t-2 rounded-lg shadow-lg"><!--侧边栏-->
                 <router-link to="/user" class="py-4 my-2 text-center font-semibold">个人信息</router-link>
                 <!--跳转到“/user”个人信息界面-->
                 <hr>
@@ -19,10 +19,9 @@
                 </div>
                 </div>
                 <div class="flex-1 p-10">
-                <div class="h-auto w-auto bg-white rounded-lg shadow-lg">
+                <div class="h-auto w-auto bg-white rounded-lg shadow-lg"><!--主体内容，反馈的历史记录及通知-->
                     <div class=" font-semibold text-black text-center p-2">我的反馈记录 (共{{ total }}条)<hr></div>
-                    <div class="ticket-list">
-                        <div v-for="ticket in items" :key="ticket.id" class="ticket-item rounded p-4 mb-3">
+                        <div v-for="ticket in items" :key="ticket.id" class="rounded p-4 mb-3">
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
                                     <h3 class="text-lg font-semibold mb-2">{{ ticket.title }}</h3>
@@ -46,13 +45,95 @@
                                 <div class="text-right text-sm text-gray-500 ml-4">
                                     <div>{{ formatDate(ticket.created_at) }}</div>
                                     <div>工单ID: {{ ticket.id }}</div>
+                                    <button @click="ticket_detail(ticket.id)">>详细信息</button>
                                 </div>
                             </div>
                             <hr>
                         </div>
-                    </div>
                     <div v-if="items.length === 0" class="text-center py-4 text-lg">暂无反馈记录</div>
                 </div><!--主体内容，反馈的历史记录及通知-->
+            </div>
+        </div>
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="details"><!--详细信息弹窗-->
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                <div v-if="loading" class="text-xl text-gray-500 text-center">加载中<hr></div>
+                <div class=" font-semibold text-center text-lg py-2">反馈详情</div>
+                <hr>
+                <div class="mt-4" v-if="complete">
+                    <h3 class="text-lg mb-2 text-center">{{ ticket_details.title }}</h3>
+                    <p class="text-gray-600 mb-3"><strong>问题描述:</strong>{{ ticket_details.content }}</p>
+                    <div class="flex flex-wrap gap-2 mb-2">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                                {{ ticket_details.category }}
+                            </span>
+                            <span :class="getStatusClass(ticket_details.status)" class="px-2 py-1 text-xs rounded">
+                                {{ getStatusText(ticket_details.status) }}
+                            </span>
+                            <span v-if="ticket_details.is_urgent" class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                紧急
+                            </span>
+                            <span v-if="ticket_details.is_anonymous" class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
+                                匿名
+                            </span>
+                            <span v-if="!ticket_details.assigned_admin_id" class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                未处理
+                            </span>
+                    </div>
+
+                    <div v-if="ticket_details.image_ids && ticket_details.image_ids.length > 0" class="mb-6">
+                        <h2 class="text-lg font-semibold text-gray-700 mb-2">附件图片</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            <div v-for="imageId in ticket_details.image_ids" :key="imageId"class="relative group">
+                                <!-- 使用图片显示组件 -->
+                                <ImageDisplay :image-id="imageId" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-gray-500 text-sm">创建时间: {{ formatDate(ticket_details.created_at) }}</div>
+                    <div class="text-gray-500 text-sm">最后更新时间: {{ formatDate(ticket_details.updated_at) }}</div>
+
+                    <div v-if="ticket_details.assigned_admin_id" class="mb-6"><!--处理信息-->
+                        <h2 class="text-lg font-semibold text-gray-700 mb-2">处理信息</h2>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                                负责人: 管理员 {{ ticket_details.assigned_admin_id }}
+                            </div>
+                            <div class="text-gray-500 text-sm">
+                                认领时间: {{ formatDate(ticket_details.claimed_at) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.messages && ticket_details.messages.length > 0"><!--沟通信息-->
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">沟通记录</h2>
+                        <div class="space-y-4">
+                            <div v-for="message in ticket_details.messages" :key="message.id"
+                                class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-300">
+                                <div class="flex justify-between items-center mb-2" v-if="!message.is_internal_note">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-medium text-gray-700">
+                                            {{ message.is_internal_note ? '管理员' : '用户' }} {{ message.sender_user_id }}
+                                        </span>
+                                        <span  class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs" 
+                                            v-if="message.is_internal_note">内部备注</span>
+                                    </div>
+                                    <span class="text-gray-500 text-sm">{{ formatDate(message.created_at) }}</span>
+                                </div>
+                                <p class="text-gray-600">{{ message.body }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p v-else>暂无回复</p>
+                </div>
+                <div class="flex items-center justify-center">
+                    <button 
+                    type="button" @click="details=false"
+                    class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                    hover:bg-gray-400 transition">
+                    返回
+                    </button>
+                </div>
             </div>
         </div>
         <div class="fixed inset-0 flex items-center justify-center z-50" v-if="iserror">
@@ -75,6 +156,7 @@
 <script>
     import PageFoot from './PageFoot.vue';
     import PageHead from './PageHead.vue';
+    import ImageDisplay from './ImageDisplay.vue'
     import axios from 'axios';
     export default{
         data(){
@@ -86,14 +168,22 @@
                 items: [], // 工单列表数据
                 total: 0,  // 总条数
                 page: 1,
-                page_size: 20
+                page_size: 20,
+                details:false,
+                loading:false,
+                ticket_details:{},
+                complete:false,
             };
         },
         components:{
             PageFoot,//脚标导入，虽然只有一行但还是想这么写
-            PageHead
+            PageHead,
+            ImageDisplay//加载图片的组件，但是是抄AI的
         },
         methods:{
+            details_show(){
+                this.details=true
+            },
             getStatusText(status) {
                 const statusMap = {
                     'NEW': '新建',
@@ -138,9 +228,26 @@
                     this.iserror = true
                     this.errormessages = error.response.data.message
                 }
-            }
+            },
+            async ticket_detail(id){//获取详细信息
+                this.details_show()
+                this.complete = false
+                try{
+                    this.loading = true
+                    const response = await axios.get(`http://46.203.124.16:8080/api/v1/tickets/${id}`)
+                    this.ticket_details = response.data
+                    this.loading = false
+                    this.complete = true
+                }
+                catch(error){
+                    this.details = false
+                    this.loading = false
+                    this.iserror = true
+                    this.errormessages = error.response.data.message
+                }
+            },
         },
-        mounted() {
+        mounted() {//页面加载时获取历史记录
             this.fetchTickets()
         }
     }

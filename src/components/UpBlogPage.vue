@@ -180,9 +180,11 @@
                 const formData = new FormData();
                 // 根据接口要求，参数名为"file"
                 formData.append('file', file);
+                const token = localStorage.getItem('access_token')
                 await axios.post('http://46.203.124.16:8080/api/v1/images', formData, {
                     headers: {
-                        'Content-Type': 'multipart/form-data'
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${token}`  // 添加认证头
                     },
                     // 添加超时设置
                     timeout: 30000,
@@ -208,6 +210,7 @@
                     this.uploadmessageerror=true
                     return;
                 }
+                const token = localStorage.getItem('access_token')
                 if(this.files.length !== 0) {
                     this.uploading = true;
                     this.currentUploadIndex = 0;
@@ -217,7 +220,6 @@
                             this.currentUploadIndex = i;
                             await this.uploadSingleFile(this.files[i]);
                         }
-                        this.text = '';
                         this.files = [];
                     } catch (error) {
                         this.errormessage=error.response.data.message
@@ -225,22 +227,33 @@
                     } finally {
                         this.uploading = false;
                         this.iscomplete = this.iserror ? false : true
-                        console.log(this.img)
                     }
                 }
-                await axios.post('http://46.203.124.16:8080/api/v1/tickets',{
-                    title:this.title,
-                    content:this.text,
-                    category:this.category,
-                    is_urgent:this.isUrgent,
-                    is_anonymous:this.isAnonymous,
-                    image_ids:this.img
-                }).then(response=>{
-                    const ticketimformation=response.data
-                    this.completetime=ticketimformation.created_at
-                    this.success=true
-                    this.iscomplete=false
-                })
+                try{
+                    await axios.post('http://46.203.124.16:8080/api/v1/tickets',{
+                        title:this.title,
+                        content:this.text,
+                        category:this.category,
+                        is_urgent:this.isUrgent,
+                        is_anonymous:this.isAnonymous,
+                        image_ids:this.img
+                    },
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`  // 添加认证头
+                        }
+                    }).then(response=>{
+                        const ticketimformation=response.data
+                        this.completetime=ticketimformation.created_at
+                        this.success=true
+                        this.iscomplete=false
+                    })
+                } catch (error) {
+                    this.errormessage=error.response.data.message
+                    this.iserror=true
+                    console.log(error)
+                }
+                
             },
             triggerFileInput() {
                 // 通过refs访问文件输入框并触发点击,这也是DS写的,千万不要问我这个原理是什么!_!
