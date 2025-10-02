@@ -126,7 +126,37 @@
                     </div>
                     <p v-else>暂无回复</p>
                 </div>
-                <div class="flex items-center justify-center">
+
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.rating"><!--评分信息-->
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">评分</h2>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="flex mr-4">
+                                <span v-for="n in 5" :key="n" class="text-2xl":class="n <= ticket_details.rating.stars ? 
+                                'text-yellow-500' : 'text-gray-300'">★</span>
+                            </div>
+                            <span class="text-lg font-medium text-gray-700">{{ ticket_details.rating.stars }} 星</span>
+                        </div>
+                        <p class="text-gray-600 mb-2">{{ ticket_details.rating.comment }}</p>
+                        <p class="text-gray-500 text-sm">评分时间: {{ formatDate(ticket_details.rating.created_at) }}</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6"><!--操作区域-->
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">操作</h2>
+                    <div class="flex space-x-4">
+                        <button v-if="ticket_details.status === 'RESOLVED' && !ticket_details.rating" @click="showRatingDialog = true"
+                            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+                            评价服务
+                        </button>
+                        <button @click="addMessage = true"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+                            添加回复
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center py-2">
                     <button 
                     type="button" @click="details=false"
                     class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
@@ -136,11 +166,32 @@
                 </div>
             </div>
         </div>
+
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="addMessage"><!--添加回复弹窗-->
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                <div class=" font-semibold text-center text-lg py-2">添加回复</div>
+                <hr>
+                <div class="mt-4">
+                    <textarea v-model="newMessageBody" rows="6" class="w-full p-2 border border-gray-300 rounded-lg"
+                        placeholder="请输入您的回复内容..."></textarea>
+                </div>
+                <span v-if="addingmessage" class="text-blue-500">正在上传回复...</span>
+                <span v-if="completetime" class="text-green-500">回复成功，时间: {{ completetime }}</span>
+                <div class="flex items-center justify-center space-x-4 mt-4">
+                    <button type="button" @click="addMessage=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                    hover:bg-gray-400 transition">取消</button>
+                    <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded 
+                        hover:bg-blue-600 transition" @click="addfeedbackmessage">
+                    提交</button>
+                </div>
+            </div>
+        </div>
+
         <div class="fixed inset-0 flex items-center justify-center z-50" v-if="iserror">
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
                 <div class="text-red-500 font-semibold text-center py-2">获取历史记录失败！<hr></div>
                 <div class="text-gray-500 text-center">{{ errormessages }}</div>
-                <div class="flex items-center justify-center">
+                <div class="flex items-center justify-center py-2">
                     <button 
                     type="button" @click="iserror=false"
                     class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
@@ -150,6 +201,7 @@
                 </div>
             </div>
         </div>
+
         <PageFoot></PageFoot>
     </div>
 </template>
@@ -173,6 +225,11 @@
                 loading:false,
                 ticket_details:{},
                 complete:false,
+                showRatingDialog: false,
+                newMessageBody: '',
+                addMessage:false,
+                addingmessage:false,
+                completetime:''
             };
         },
         components:{
@@ -181,6 +238,20 @@
             ImageDisplay//加载图片的组件，但是是抄AI的
         },
         methods:{
+            async addfeedbackmessage(){
+                this.addingmessage = true
+                this.completetime = ''
+                try{
+                    const response = await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${this.ticket_details.id}/messages`, {
+                        body: this.newMessageBody,
+                    })
+                    this.completetime = response.data.created_at
+                    this.addingmessage = false
+                } catch (error) {
+                    this.iserror = true
+                    this.errormessages = error.response.data.message
+                }
+            },
             details_show(){
                 this.details=true
             },
