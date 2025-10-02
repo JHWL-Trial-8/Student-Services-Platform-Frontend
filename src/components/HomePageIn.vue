@@ -8,7 +8,7 @@
                 <router-link to="/user" class="py-4 my-2 text-center font-semibold">个人信息</router-link>
                 <!--跳转到“/user”个人信息界面-->
                 <hr>
-                <router-link to="/up" class="py-4 my-2 text-center font-semibold" v-if="role === 'STUDENT'">提交问题反馈</router-link>
+                <router-link to="/up" class="py-4 my-2 text-center font-semibold">提交问题反馈</router-link>
                 <!--跳转到“/up”上传问题反馈界面-->
                 <div class="w-auto rounded-md p-4"><!--信息显示-->
                 <img src="../assets/JHWL-Trial-8.jpg" alt="头像" class="flex"><!--用户头像-->
