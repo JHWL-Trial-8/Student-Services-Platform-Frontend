@@ -57,15 +57,16 @@
         </div>
         <div class="fixed inset-0 flex items-center justify-center z-50" v-if="iserror">
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-                <div class="text-red-500 font-semibold text-center">获取历史记录失败！</div>
-                <hr>
+                <div class="text-red-500 font-semibold text-center py-2">获取历史记录失败！<hr></div>
                 <div class="text-gray-500 text-center">{{ errormessages }}</div>
-                <button 
+                <div class="flex items-center justify-center">
+                    <button 
                     type="button" @click="iserror=false"
                     class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
                     hover:bg-gray-400 transition">
                     返回
-                </button>
+                    </button>
+                </div>
             </div>
         </div>
         <PageFoot></PageFoot>

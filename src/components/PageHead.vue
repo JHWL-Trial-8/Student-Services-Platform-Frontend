@@ -19,7 +19,7 @@
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
             <div class=" font-semibold text-center text-lg">确认退出？</div>
             <hr>
-            <div class="flex justify-end space-x-3 py-2">
+            <div class="space-x-3 py-2 flex items-center justify-center">
                 <button 
                     @click="change_if=false"
                     class="bg-gray-300 text-gray-700 py-2 px-4 rounded 

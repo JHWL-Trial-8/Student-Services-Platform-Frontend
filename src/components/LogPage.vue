@@ -95,7 +95,8 @@
                     // 4. 保存用户信息
                     localStorage.setItem('username', userData.name);
                     localStorage.setItem('role', userData.role);
-      
+                    
+                    const role=userData.role
                     // 5. 跳转页面
                     if(role === 'STUDENT'){
                         this.$router.push('/home');
@@ -106,7 +107,7 @@
                 }
                 catch(error){
                     this.iserror=true
-                    this.message=error.response.data.error
+                    this.message=error.response.data.message
                 }
             },
             register(){
