@@ -2,8 +2,10 @@
     <div class="p-4">
         <!-- 图片显示区域 -->
         <div v-if="imageUrl" class="mb-4">
-            <img :src="imageUrl" :alt="imageName" class="max-w-full h-auto rounded-lg shadow-md">
-            <p class="mt-2 text-sm text-gray-600">{{ imageName }}</p>
+            <div @click="previewImage(imageUrl)" class="cursor-pointer mb-2 text-blue-500 hover:underline">
+                <img :src="imageUrl" :alt="imageName" class="max-w-full h-auto rounded-lg shadow-md">
+                <p class="mt-2 text-sm text-gray-600">{{ imageName }}</p>
+            </div>
         </div>
     
         <!-- 加载状态 -->
@@ -71,6 +73,9 @@
                     } finally {
                         this.loading = false
                     }
+            },
+            previewImage(imageUrl) {
+                window.open(imageUrl)
             }
         },
         mounted() {

@@ -80,7 +80,7 @@
                             </span>
                     </div>
 
-                    <div v-if="ticket_details.image_ids && ticket_details.image_ids.length > 0" class="mb-6">
+                    <div v-if="ticket_details.image_ids && ticket_details.image_ids.length > 0" class="mb-6"><!--附件图片-->
                         <h2 class="text-lg font-semibold text-gray-700 mb-2">附件图片</h2>
                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             <div v-for="imageId in ticket_details.image_ids" :key="imageId"class="relative group">
