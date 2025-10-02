@@ -76,20 +76,33 @@
             }
         },
         methods:{
-            login(){
-                axios.post('http://46.203.124.16:8080/api/v1/auth/login',{
-                    email:this.Email,
-                    password:this.Password
-                }).then(response=>{
-                    const userinformation=response.data
-                    localStorage.setItem('access_token',userinformation.access_token)
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${userinformation.access_token}`;
-                    this.$router.push('/home'); 
-                })
-                .catch(error=>{
+            async login(){
+                try {
+                    // 1. 发送登录请求
+                    const loginResponse = await axios.post('http://46.203.124.16:8080/api/v1/auth/login', {
+                        email: this.Email,
+                        password: this.Password
+                    });
+                    const access_token = loginResponse.data.access_token;
+                    // 2. 保存token
+                    localStorage.setItem('access_token', access_token);
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+      
+                    // 3. 获取用户信息
+                    const userResponse = await axios.get('http://46.203.124.16:8080/api/v1/users/me');
+                    const userData = userResponse.data;
+      
+                    // 4. 保存用户信息
+                    localStorage.setItem('username', userData.name);
+                    localStorage.setItem('role', userData.role);
+      
+                    // 5. 跳转页面
+                    this.$router.push('/home');
+                }
+                catch(error){
                     this.iserror=true
                     this.message=error.response.data.error
-                })
+                }
                 axios.get('http://46.203.124.16:8080/api/v1/users/me').then(response=>{
                     const userinformation=response.data
                     localStorage.setItem('username',userinformation.name)//增加了获取个人信息的环节
