@@ -54,6 +54,7 @@
                 </div><!--主体内容，反馈的历史记录及通知-->
             </div>
         </div>
+
         <div class="fixed inset-0 flex items-center justify-center z-50" v-if="details"><!--详细信息弹窗-->
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
                 <div v-if="loading" class="text-xl text-gray-500 text-center">加载中<hr></div>
@@ -246,11 +247,14 @@
                         body: this.newMessageBody,
                     })
                     this.completetime = response.data.created_at
+                    this.newMessageBody = ''
                     this.addingmessage = false
                 } catch (error) {
                     this.iserror = true
-                    this.errormessages = error.response.data.message
+                    this.errormessages = error.response?.data?.message || '请检查网络连接'
+                    this.addingmessage = false
                 }
+                this.completetime=formatDate(this.completetime)
             },
             details_show(){
                 this.details=true
@@ -297,7 +301,7 @@
         
                 } catch (error) {
                     this.iserror = true
-                    this.errormessages = error.response.data.message
+                    this.errormessages = error.response?.data?.message || '请检查网络连接'
                 }
             },
             async ticket_detail(id){//获取详细信息
@@ -314,7 +318,7 @@
                     this.details = false
                     this.loading = false
                     this.iserror = true
-                    this.errormessages = error.response.data.message
+                    this.errormessages = error.response?.data?.message || '请检查网络连接'
                 }
             },
         },

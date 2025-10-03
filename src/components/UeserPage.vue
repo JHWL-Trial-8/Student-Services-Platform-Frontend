@@ -5,10 +5,20 @@
         <div class=" p-10 w-80"><!--侧边栏-->
             <div class="flex flex-col w-60 min-h-screen p-10 bg-white 
                     border-red-400 border-t-2 rounded-lg shadow-lg">
-                <RouterLink class="py-4 my-2 text-center font-semibold" to="/home">反馈记录</RouterLink>
-                <hr>
-                <RouterLink class="py-4 my-2 text-center font-semibold" to="/up">提交问题反馈</RouterLink><!--边栏内容示例，但是没有绑定页面跳转内容-->
-                <hr><!--分割线-->
+                <RouterLink class="py-4 my-2 text-center font-semibold" to="/home" v-if="role === 'STUDENT'">反馈记录</RouterLink>
+                <hr v-if="role === 'STUDENT'">
+                <RouterLink class="py-4 my-2 text-center font-semibold" to="/up" v-if="role === 'STUDENT'">提交问题反馈</RouterLink><!--边栏内容示例，但是没有绑定页面跳转内容-->
+                <hr v-if="role === 'STUDENT'"><!--分割线-->
+                <RouterLink class="py-4 my-2 text-center font-semibold" to="/feedbackpage" v-if="role === 'ADMIN'">处理问题反馈</RouterLink>
+                <hr v-if="role === 'ADMIN'"><!--管理员才显示-->
+                <RouterLink class="py-4 my-2 text-center font-semibold" to="/controlluser" v-if="role === 'SUPER_ADMIN'">用户账号管理</RouterLink>
+                <hr v-if="role === 'SUPER_ADMIN'"><!--超级管理员才显示-->
+                <div class="w-auto rounded-md p-4"><!--信息显示-->
+                <img src="../assets/JHWL-Trial-8.jpg" alt="头像" class="flex"><!--用户头像-->
+                </div>
+                <div class="py-4 my-2 text-center font-semibold"><!--用户名称-->
+                    {{username}}
+                </div>
                 </div>
                 </div>
                 <div class="flex-1 p-10">
@@ -95,7 +105,8 @@
                 iscompile:true,
                 message:'',
                 change:false,
-                iserror:false
+                iserror:false,
+                role:''
             }
         },
         components:{
@@ -113,12 +124,13 @@
                         dept:this.acadymic,
                         name:this.username,
                         phone:this.phone,
-                        allowemail:this.allow
+                        allow_email:this.allow //修复了没有下划线导致的错误，后端居然不告诉我参数有误TAT
                     }).then(response => {
                         this.iscompile=true
                         const updatedata=response.data
                         this.message=updatedata.updated_at
                         this.change=true
+                        localStorage.setItem('username', this.username)
                     })
                     .catch(error => {
                         const errormessage=error.response.data
@@ -129,7 +141,7 @@
             }
         },
         async created() {
-            // 直接在created生命周期中获取数据,这真不会,抄AI模板的有空再学
+            // 直接在created生命周期中获取数据
             try {
                 const response = await axios.get('http://46.203.124.16:8080/api/v1/users/me')
                 const user = response.data
@@ -138,6 +150,7 @@
                 this.username = user.name
                 this.phone=user.phone
                 this.allowemail=(user.allow_email?'是':'否')
+                this.role=user.role
             }
             catch (error) {
                 console.error('获取用户信息失败:', error)
