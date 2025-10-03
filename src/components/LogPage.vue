@@ -95,6 +95,7 @@
                     // 4. 保存用户信息
                     localStorage.setItem('username', userData.name);
                     localStorage.setItem('role', userData.role);
+                    localStorage.setItem('id', userData.id);
                     
                     const role=userData.role
                     // 5. 跳转页面

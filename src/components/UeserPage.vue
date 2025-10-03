@@ -72,7 +72,7 @@
     <div class="fixed inset-0 flex items-center justify-center z-50" v-if="change">
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
             <h2 class="text-xl font-bold py-2">修改成功！</h2>
-            <h2 class="text-sm py-2">保存时间{{ message }}</h2>
+            <h2 class="text-sm py-2">保存时间{{ formatDate(message) }}</h2>
             <hr>
             <div class="p-6">
                 <div class="flex justify-end space-x-3">
@@ -155,6 +155,9 @@
             catch (error) {
                 console.error('获取用户信息失败:', error)
             }
-        }
+        },
+        formatDate(dateString) {//格式化日期
+            return new Date(dateString).toLocaleDateString('zh-CN')
+        },
     }
 </script>

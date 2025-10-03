@@ -61,7 +61,7 @@
                         <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
                             <div class="text-xl font-semibold py-2 text-center">注册成功!</div>
                             <div class="text-lg py-2 text-center 
-                            text-blue-300">注册时间：{{ registertime }}</div>
+                            text-blue-300">注册时间：{{ formatDate(registertime) }}</div>
                             <hr>
                             <div class="text-sm py-2 
                             text-center text-gray-400">点击下方返回按钮回到登录页面</div>
@@ -147,7 +147,10 @@ import axios from 'axios';
             },//比如输入的密码不能太简单，邮箱得合法，且不能为空之类的，在按下按钮后需要有弹窗并阻止注册
             back(){
                 this.$router.push('/log');
-            }
+            },
+            formatDate(dateString) {//格式化日期
+                return new Date(dateString).toLocaleDateString('zh-CN')
+            },
         }
     }
 </script>

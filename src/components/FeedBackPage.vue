@@ -145,11 +145,15 @@
                                                             {{ formatDate(ticket.created_at) }}
                                                         </td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                            <button v-if="!ticket.assigned_admin_id && ticket.status === 'NEW'"
+                                                            <button v-if="!ticket.assigned_admin_id" @click="claimTicket(ticket.id)"
                                                                 class="text-blue-600 hover:text-blue-900 mr-3">
                                                                 认领
                                                             </button>
-                                                            <button class="text-green-600 hover:text-green-900">
+                                                            <button v-if="ticket.assigned_admin_id === currentUserId" @click="unclaimTicket(ticket.id)"
+                                                                class="text-blue-600 hover:text-blue-900 mr-3">
+                                                                撤销认领
+                                                            </button>
+                                                            <button class="text-green-600 hover:text-green-900" @click="ticket_detail(ticket.id)">
                                                                 查看
                                                             </button>
                                                         </td>
@@ -201,6 +205,131 @@
                 </div>
             </div>
         </div>
+
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="details"><!--详细信息弹窗-->
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                <div v-if="loading" class="text-xl text-gray-500 text-center">加载中<hr></div>
+                <div class=" font-semibold text-center text-lg py-2">反馈详情</div>
+                <hr>
+                <div class="mt-4" v-if="complete">
+                    <h3 class="text-lg mb-2 text-center">{{ ticket_details.title }}</h3>
+                    <p class="text-gray-600 mb-3"><strong>问题描述:</strong>{{ ticket_details.content }}</p>
+                    <div class="flex flex-wrap gap-2 mb-2">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                                {{ ticket_details.category }}
+                            </span>
+                            <span :class="getStatusClasses(ticket_details.status)" class="px-2 py-1 text-xs rounded">
+                                {{ getStatusText(ticket_details.status) }}
+                            </span>
+                            <span v-if="ticket_details.is_urgent" class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                紧急
+                            </span>
+                            <span v-if="ticket_details.is_anonymous" class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
+                                匿名
+                            </span>
+                            <span v-if="!ticket_details.assigned_admin_id" class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                未处理
+                            </span>
+                    </div>
+
+                    <div v-if="ticket_details.image_ids && ticket_details.image_ids.length > 0" class="mb-6"><!--附件图片-->
+                        <h2 class="text-lg font-semibold text-gray-700 mb-2">附件图片</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            <div v-for="imageId in ticket_details.image_ids" :key="imageId"class="relative group">
+                                <!-- 使用图片显示组件 -->
+                                <ImageDisplay :image-id="imageId" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-gray-500 text-sm">创建时间: {{ formatDate(ticket_details.created_at) }}</div>
+                    <div class="text-gray-500 text-sm">最后更新时间: {{ formatDate(ticket_details.updated_at) }}</div>
+
+                    <div v-if="ticket_details.assigned_admin_id" class="mb-6"><!--处理信息-->
+                        <h2 class="text-lg font-semibold text-gray-700 mb-2">处理信息</h2>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                                负责人: 管理员 {{ ticket_details.assigned_admin_id }}
+                            </div>
+                            <div class="text-gray-500 text-sm">
+                                认领时间: {{ formatDate(ticket_details.claimed_at) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.messages && ticket_details.messages.length > 0"><!--沟通信息-->
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">沟通记录</h2>
+                        <div class="space-y-4">
+                            <div v-for="message in ticket_details.messages" :key="message.id"
+                                class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-300">
+                                <div class="flex justify-between items-center mb-2" v-if="!message.is_internal_note">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-medium text-gray-700">
+                                            {{ message.is_internal_note ? '管理员' : '用户' }} {{ message.sender_user_id }}
+                                        </span>
+                                        <span  class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs" 
+                                            v-if="message.is_internal_note">内部备注</span>
+                                    </div>
+                                    <span class="text-gray-500 text-sm">{{ formatDate(message.created_at) }}</span>
+                                </div>
+                                <p class="text-gray-600">{{ message.body }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p v-else>暂无回复</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.rating"><!--评分信息-->
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">评分</h2>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="flex mr-4">
+                                <span v-for="n in 5" :key="n" class="text-2xl":class="n <= ticket_details.rating.stars ? 
+                                'text-yellow-500' : 'text-gray-300'">★</span>
+                            </div>
+                            <span class="text-lg font-medium text-gray-700">{{ ticket_details.rating.stars }} 星</span>
+                        </div>
+                        <p class="text-gray-600 mb-2">{{ ticket_details.rating.comment }}</p>
+                        <p class="text-gray-500 text-sm">评分时间: {{ formatDate(ticket_details.rating.created_at) }}</p>
+                    </div>
+                </div>
+
+                <button @click="addMessage = true"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+                        添加回复
+                </button>
+
+                <div class="flex items-center justify-center py-2">
+                    <button type="button" @click="details=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded  
+                    hover:bg-gray-400 transition">返回</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="addMessage"><!--添加回复弹窗-->
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                <div class=" font-semibold text-center text-lg py-2">添加回复</div>
+                <hr>
+                <div class="mt-4">
+                    <textarea v-model="newMessageBody" rows="6" class="w-full p-2 border border-gray-300 rounded-lg"
+                        placeholder="请输入您的回复内容..."></textarea>
+                </div>
+                <div class="mt-4 flex items-center space-x-2">
+                    <input type="checkbox" v-model="is_internal_note" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                    <label for="is_internal_note">后台提交(仅管理员可见)</label>
+                </div>
+                <span v-if="addingmessage" class="text-blue-500">正在上传回复...</span>
+                <span v-if="completetime" class="text-green-500">回复成功，时间: {{ formatDate(completetime) }}</span>
+                <div class="flex items-center justify-center space-x-4 mt-4">
+                    <button type="button" @click="addMessage=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                    hover:bg-gray-400 transition">取消</button>
+                    <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded 
+                        hover:bg-blue-600 transition" @click="addfeedbackmessage">
+                    提交</button>
+                </div>
+            </div>
+        </div>
+
         <PageFoot/>
     </div>
 </template>
@@ -208,10 +337,12 @@
     import PageHead from './PageHead.vue';
     import axios from 'axios';
     import PageFoot from './PageFoot.vue';
+    import ImageDisplay from './ImageDisplay.vue';
     export default{
         components:{
             PageHead,
-            PageFoot
+            PageFoot,
+            ImageDisplay
         },
         data(){
             return{
@@ -238,7 +369,17 @@
                     assigned_to_me: 0
                 },
                 iserror: false,
-                errormessages: ''
+                errormessages: '',
+                ticket_details:{},
+                details:false,
+                loading_details:false,
+                complete:false,
+                addMessage:false,
+                newMessageBody:'',
+                addingmessage:false,
+                completetime:'',
+                is_internal_note:false,
+                currentUserId: parseInt(localStorage.getItem('id'))
             }
         },
         computed: {
@@ -258,6 +399,73 @@
             }
         },
         methods:{
+            async unclaimTicket(ticket) {
+                try {
+                    await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${ticket}/unclaim`,{},
+                    {headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                        }})
+
+                    // 刷新列表
+                    this.fetchTickets()
+
+                } catch (error) {
+                    console.error('撤销认领工单失败:', error)
+                }
+            },
+            async claimTicket(ticket) {
+                try {
+                    await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${ticket}/claim`,{},
+                    {headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                        }})
+
+                    // 刷新列表
+                    this.fetchTickets()
+
+                } catch (error) {
+                    console.error('撤销认领工单失败:', error)
+                }
+            },
+            async addfeedbackmessage(){
+                this.addingmessage = true
+                this.completetime = ''
+                try{
+                    const response = await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${this.ticket_details.id}/messages`, {
+                        body: this.newMessageBody,
+                        is_internal_note: this.is_internal_note
+                    })
+                    this.completetime = response.data.created_at
+                    this.newMessageBody = ''
+                    this.addingmessage = false
+                } catch (error) {
+                    this.iserror = true
+                    this.errormessages = error.response?.data?.message || '请检查网络连接'
+                    this.addingmessage = false
+                }
+            },
+            details_show(){
+                this.details=true
+            },
+            async ticket_detail(id){//获取详细信息
+                this.details_show()
+                this.completetime = ''
+                this.ticket_details = {}
+                this.complete = false
+                try{
+                    this.loading = true
+                    const response = await axios.get(`http://46.203.124.16:8080/api/v1/tickets/${id}`)
+                    this.ticket_details = response.data
+                    this.loading = false
+                    this.complete = true
+                }
+                catch(error){
+                    this.details = false
+                    this.loading = false
+                    this.iserror = true
+                    this.errormessages = error.response?.data?.message || '请检查网络连接'
+                }
+            },
             prevPage() {
                 if (this.pagination.page > 1) {
                     this.pagination.page--

@@ -177,7 +177,7 @@
                         placeholder="请输入您的回复内容..."></textarea>
                 </div>
                 <span v-if="addingmessage" class="text-blue-500">正在上传回复...</span>
-                <span v-if="completetime" class="text-green-500">回复成功，时间: {{ completetime }}</span>
+                <span v-if="completetime" class="text-green-500">回复成功，时间: {{ formatDate(completetime) }}</span>
                 <div class="flex items-center justify-center space-x-4 mt-4">
                     <button type="button" @click="addMessage=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
                     hover:bg-gray-400 transition">取消</button>
@@ -230,7 +230,7 @@
                 newMessageBody: '',
                 addMessage:false,
                 addingmessage:false,
-                completetime:''
+                completetime:'',
             };
         },
         components:{

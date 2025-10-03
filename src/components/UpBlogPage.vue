@@ -93,7 +93,7 @@
         <div class="fixed inset-0 flex items-center justify-center z-50" v-if="success">
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
                 <div class=" text-lg text-center">上传成功！</div>
-                <div class=" text-sm text-center text-gray-400">{{completetime}}</div>
+                <div class=" text-sm text-center text-gray-400">{{ formatDate(completetime) }}</div>
                 <hr>
                 <div class="flex justify-end space-x-3 py-2 items-center">
                     <button 
@@ -172,6 +172,9 @@
             PageHead
         },
         methods: {
+            formatDate(dateString) {//格式化日期
+                return new Date(dateString).toLocaleDateString('zh-CN')
+            },
             handleFileUpload(event) {
                 // 处理多文件选择
                 this.files = Array.from(event.target.files);
