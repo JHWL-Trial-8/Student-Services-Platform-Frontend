@@ -138,7 +138,10 @@
                         this.iserror=true
                     });
                 }
-            }
+            },
+            formatDate(dateString) {//格式化日期
+                return new Date(dateString).toLocaleDateString('zh-CN')
+            },
         },
         async created() {
             // 直接在created生命周期中获取数据
@@ -155,9 +158,6 @@
             catch (error) {
                 console.error('获取用户信息失败:', error)
             }
-        },
-        formatDate(dateString) {//格式化日期
-            return new Date(dateString).toLocaleDateString('zh-CN')
         },
     }
 </script>
