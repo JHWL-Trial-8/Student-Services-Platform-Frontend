@@ -25,16 +25,149 @@
                 <hr>
                 <div class="py-4 my-2 text-center font-semibold">提交问题反馈</div><!--边栏内容示例，但是没有绑定页面跳转内容-->
                 <hr><!--分割线-->
+                <div class="py-4 my-2 text-center font-semibold text-red-600 text-lg">您还未登录</div>
                 </div>
                 </div>
                 <div class="flex-1 p-10">
                 <div class="h-auto w-auto bg-white rounded-lg shadow-lg"><!--主体内容显示示例-->
-                    <div class="p-5 h-auto w-auto text-center text-2xl font-semibold">欢迎使用学生服务平台！请先登录以使用</div>
-                    <div class="p-5 h-auto w-auto text-center font-semibold">在这里，你可以反馈你的遇到的问题，例如：</div>
-                    <div class="p-10 h-auto w-auto font-semibold">工大三路的路灯坏了，来修一下</div>
-                    <div class="p-10"><img class="w-40 h-40" src="../assets/f7d80737abdeffba9d69d7d0758e22f9.jpeg" alt="图片"></div><!--随机挑的图片-->
-                    <div class="px-10 py-5 h-auto w-auto font-semibold">管理员反馈：</div>
-                    <div class="px-20 py-5 h-auto w-auto font-semibold">收到！已处理</div>
+                    <div class="h-auto w-auto bg-white rounded-lg shadow-lg"><!--主体内容，反馈的历史记录及通知-->
+                    <div class=" font-semibold text-black text-center p-2 text-4xl">欢迎使用学生服务平台！</div>
+                    <div class=" font-semibold text-black text-center p-2 text-1xl">在这里，你可以反馈你遇到的问题<hr></div>
+                        <div class="rounded p-4 mb-3">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold mb-2">工大三路的灯坏了</h3>
+                                    <p class="text-gray-600 mb-3">工大三路的灯坏了</p>
+                                    <div class="flex flex-wrap gap-2 mb-2">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                                            公共施设
+                                        </span>
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 text-xs rounded">
+                                            新建
+                                        </span>
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                            紧急
+                                        </span>
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
+                                            匿名
+                                        </span>
+                                    </div>
+                                </div>
+          
+                                <div class="text-right text-sm text-gray-500 ml-4">
+                                    <div>2025/10/7</div>
+                                    <div>工单ID: 1145</div>
+                                    <button>>详细信息</button>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                        <div class="rounded p-4 mb-3">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold mb-2">老闭灯</h3>
+                                    <p class="text-gray-600 mb-3">寝室的灯坏了</p>
+                                    <div class="flex flex-wrap gap-2 mb-2">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                                            寝室用具
+                                        </span>
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 text-xs rounded">
+                                            新建
+                                        </span>
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                            紧急
+                                        </span>
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
+                                            匿名
+                                        </span>
+                                    </div>
+                                </div>
+          
+                                <div class="text-right text-sm text-gray-500 ml-4">
+                                    <div>2025/10/7</div>
+                                    <div>工单ID: 11451</div>
+                                    <button>>详细信息</button>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                        <div class="rounded p-4 mb-3">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold mb-2">连不上校园网了</h3>
+                                    <p class="text-gray-600 mb-3">连不上校园网了</p>
+                                    <div class="flex flex-wrap gap-2 mb-2">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                                            服务工作
+                                        </span>
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 text-xs rounded">
+                                            新建
+                                        </span>
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                            紧急
+                                        </span>
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
+                                            匿名
+                                        </span>
+                                    </div>
+                                </div>
+          
+                                <div class="text-right text-sm text-gray-500 ml-4">
+                                    <div>2025/10/7</div>
+                                    <div>工单ID: 114514</div>
+                                    <button>>详细信息</button>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                        <div class="rounded p-4 mb-3">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold mb-2">投影仪坏了</h3>
+                                    <p class="text-gray-600 mb-3">投影仪坏了</p>
+                                    <div class="flex flex-wrap gap-2 mb-2">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                                            教室用具
+                                        </span>
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 text-xs rounded">
+                                            新建
+                                        </span>
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                            紧急
+                                        </span>
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
+                                            匿名
+                                        </span>
+                                    </div>
+                                </div>
+          
+                                <div class="text-right text-sm text-gray-500 ml-4">
+                                    <div>2025/10/7</div>
+                                    <div>工单ID: 1145141</div>
+                                    <button>>详细信息</button>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+                </div><!--主体内容，反馈的历史记录及通知-->
+                <div class="px-6 py-4 border-t border-gray-200"><!--分页组件-->
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            第 1 页，共 1 页
+                        </div>
+                        <div class="flex space-x-2">
+                            <button  class="px-3 py-1 border border-gray-300 rounded-md
+                                text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                上一页
+                            </button>
+                            <button 
+                                class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white 
+                                hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                下一页
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
