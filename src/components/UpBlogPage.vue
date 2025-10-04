@@ -18,72 +18,119 @@
                 </div>
             </div>
 
+    <div class="flex-1 p-6 justify-items-center">
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full">
+            <!-- 标题输入区域 -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">标题</label>
+                <div class="flex items-center">
+                    <input type="text" v-model="title" placeholder="请输入问题标题..."
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none 
+                    focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                </div>
+            </div>
 
-            <div class="flex-1 p-10 flex-row">
-                <div class="h-auto w-auto bg-white rounded-lg shadow-lg">
-                    <div class="flex py-4 px-2">
-                        <div class=" h-10 w-80 py-1 rounded shadow-sm flex">
-                            <div class="p-1">标题:   </div>
-                            <input type="text" v-model="title" class=" p-1"><!--标题-->
-                        </div>
+            <!-- 分类选择 -->
+            <div class="category-selector mb-6">
+                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                    问题分类
+                </label>
+                <select v-model="category"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+                    transition-all duration-200 bg-white">
+                    <option value="" disabled>请选择问题分类</option>
+                    <option value="寝室用具">寝室用具</option>
+                    <option value="教室用具">教室用具</option>
+                    <option value="公共设施">公共设施</option>
+                    <option value="服务工作">服务工作</option>
+                    <option value="其他问题">其他问题</option>
+                </select>
+            </div>
+
+            <!-- 问题描述 -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">问题描述</label>
+                <textarea 
+                    placeholder="请详细描述您遇到的问题..." 
+                    v-model="text"
+                    class="w-full h-48 px-4 py-3 border border-gray-300 rounded-lg 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent 
+                    resize-vertical transition-all duration-200"></textarea>
+            </div>
+
+            <!-- 复选框选项 -->
+            <div class="checkbox-group mb-6">
+                <div class="flex items-center space-x-6">
+                    <div class="checkbox-item flex items-center">
+                        <input type="checkbox" id="urgent" v-model="isUrgent"
+                            class="w-4 h-4 text-blue-600 border-gray-300
+                            rounded focus:ring-blue-500">
+                        <label for="urgent" class="ml-2 text-sm text-gray-700">紧急问题</label>
                     </div>
-                    <div class="category-selector mb-4">
-                        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">
-                            问题分类
-                        </label>
-                        <select v-model="category"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="" disabled>请选择问题分类</option>
-                            <option value="寝室用具">寝室用具</option>
-                            <option value="教室用具">教室用具</option>
-                            <option value="公共设施">公共设施</option>
-                            <option value="服务工作">服务工作</option>
-                            <option value="其他问题">其他问题</option>
-                        </select>
-                    </div>
-                    <textarea name="shurukuang" id="shurukuang" placeholder="请输入问题描述" v-model="text"
-                        class=" w-auto h-full flex-row p-10 border focus:outline-none 
-                        focus:ring-2 focus:ring-blue-600 rounded-sm m-10"></textarea>
-                    <div><!--大输入框-->
-                    </div><!--图片文件提交按钮,并且还是多图片提交-->
-                    <div class="checkbox-group px-2 flex-row">
-                        <div class="checkbox-item py-2">
-                            <input type="checkbox" id="urgent" v-model="isUrgent">
-                            <label for="urgent">紧急问题</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="anonymous" v-model="isAnonymous">
-                            <label for="anonymous">匿名提交</label>
-                        </div>
-                    </div>
-                    <div class="flex py-2 px-2 flex-row">
-                        <button class="h-8 w-32 bg-blue-400 p-2 flex items-center justify-center text-white rounded hover:bg-blue-500" 
-                                @click="triggerFileInput">选择图片</button>
-                        <!-- 隐藏的文件输入框 -->
-                        <input type="file" ref="fileInput" class="file-input" multiple accept="image/*" @change="handleFileUpload">
-                        <div class="px-2">
-                            <button class="h-8 w-32 bg-blue-400 p-2 flex items-center 
-                            justify-center text-white rounded hover:bg-blue-500" @click="submitFile">提交</button>
-                            <!--提交按钮，之后触发判定，免得有人啥也不写就交了-->
-                        </div>
-                    </div>
-                    <!-- 显示已选择的文件 -->
-                    <div v-if="files.length > 0" class="ml-10 mt-2">
-                        <p class="text-sm text-gray-600">已选择 {{ files.length }} 个文件：</p>
-                        <ul class="text-xs text-gray-500 mt-1">
-                            <li v-for="(file, index) in files" :key="index" class="truncate">
-                                {{ file.name }}
-                                <button @click="removeImage(index)" class="text-red-500">×</button>
-                            </li>
-                        </ul>
-                    </div>
-                    <div v-if="uploading" class="ml-10 mt-4">
-                        <p class="text-sm text-blue-600">正在上传 {{ currentUploadIndex + 1 }}/{{ files.length }}...</p>
+                    <div class="checkbox-item flex items-center">
+                        <input type="checkbox" id="anonymous" v-model="isAnonymous"
+                            class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <label for="anonymous" class="ml-2 text-sm text-gray-700">匿名提交</label>
                     </div>
                 </div>
-            </div> 
-        </div>
+            </div>
 
+            <!-- 图片上传区域 -->
+            <div class="mb-6">
+                <div class="flex items-center space-x-4">
+                    <button class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 
+                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                        transition-all duration-200 flex items-center space-x-2"
+                        @click="triggerFileInput">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 
+                            20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span>选择图片</span>
+                    </button>
+                
+                    <!-- 隐藏的文件输入框 -->
+                    <input type="file" ref="fileInput" class="hidden" multiple accept="image/*" @change="handleFileUpload">
+                
+                    <button 
+                        class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 flex items-center space-x-2"
+                        @click="submitFile">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        <span>提交反馈</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 已选择文件显示 -->
+            <div v-if="files.length > 0" class="mt-4 p-4 bg-gray-50 rounded-lg">
+                <p class="text-sm font-medium text-gray-700 mb-2">已选择 {{ files.length }} 个文件：</p>
+                <div class="space-y-2">
+                    <div v-for="(file, index) in files" :key="index" 
+                        class="flex items-center justify-between py-2 px-3 bg-white rounded border border-gray-200">
+                        <span class="text-sm text-gray-600 truncate flex-1">{{ file.name }}</span>
+                        <button @click="removeImage(index)" 
+                            class="ml-2 text-red-500 hover:text-red-700 transition-colors duration-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 上传进度 -->
+            <div v-if="uploading" class="mt-4 p-3 bg-blue-50 rounded-lg">
+                <div class="flex items-center space-x-3">
+                    <div class="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
+                    <p class="text-sm text-blue-600">正在上传 {{ currentUploadIndex + 1 }}/{{ files.length }}...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 
         <div class="fixed inset-0 flex items-center justify-center z-50" v-if="iscomplete"><!--小弹窗(·-·)-->
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">

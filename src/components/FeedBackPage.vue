@@ -315,7 +315,7 @@
                         标记为垃圾信息
                     </button>
 
-                    <button @click="solved()" v-if="ticket_details.status !== 'RESOLVED' 
+                    <button @click="solved()" v-if="ticket_details.status !== 'RESOLVED' && ticket_details.assigned_admin_id === currentUserId
                     && ticket_details.status !== 'SPAM_PENDING' && ticket_details.status !== 'SPAM_CONFIRMED' && 
                     ticket_details.status !== 'SPAM_REJECTED' && ticket_details.status !== 'CLOSED'"
                         class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">

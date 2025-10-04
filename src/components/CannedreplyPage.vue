@@ -23,7 +23,10 @@
 
         <div class="flex-1 p-10">
             <div class="h-auto w-auto bg-white rounded-lg shadow-lg">
-                
+                <div v-if="loading" class="p-8 text-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                    <p class="mt-2 text-gray-600">加载中...</p>
+                </div>
                 <div class=" font-semibold text-black text-center p-2">预设反馈信息 (共{{ total }}条)<hr></div>
                 <div v-for="ticket in items" :key="ticket.id" class="rounded p-4 mb-3">
                     <div class="flex justify-between items-start">
@@ -39,6 +42,8 @@
                         <div class="text-right text-sm text-gray-500 ml-4">
                             <div>{{ formatDate(ticket.created_at) }}</div>
                             <div>预设信息ID: {{ ticket.id }}</div>
+                            <button class="text-gray-500 hover:text-gray-700" >修改</button>
+                            <button class="text-red-500 hover:text-red-700" >删除</button>
                         </div>
                     </div>
                     <hr>
@@ -103,7 +108,8 @@
                 newMessageBody: '',
                 addingmessage: false,
                 completetime: '',
-                title:''
+                title:'',
+                loading:false
             }
         },
         methods: {
@@ -134,6 +140,7 @@
                 }
             },
             async fetchData() {
+                this.loading = true;
                 try {
                     const response = await axios.get('http://46.203.124.16:8080/api/v1/canned-replies',{
                         params: {
@@ -146,6 +153,7 @@
                     this.total = response.data.total
                     this.page = response.data.page
                     this.page_size = response.data.page_size
+                    this.loading = false
         
                 } catch (error) {
                     this.iserror = true
