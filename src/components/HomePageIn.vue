@@ -254,7 +254,6 @@
                     this.errormessages = error.response?.data?.message || '请检查网络连接'
                     this.addingmessage = false
                 }
-                this.completetime=formatDate(this.completetime)
             },
             details_show(){
                 this.details=true

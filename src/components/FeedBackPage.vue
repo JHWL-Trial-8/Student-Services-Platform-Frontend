@@ -7,6 +7,8 @@
                     border-red-400 border-t-2 rounded-lg shadow-lg">
                     <router-link to="/user" class="py-4 my-2 text-center font-semibold">个人信息</router-link>
                     <hr>
+                    <router-link to="/cannedreply" class="py-4 my-2 text-center font-semibold">预设反馈信息</router-link>
+                    <hr>
                     <router-link to="/controlluser" class="py-4 my-2 text-center font-semibold" v-if="role === 'SUPER_ADMIN'">用户账号管理</router-link>
                     <hr v-if="role === 'SUPER_ADMIN'">
                     <div class="w-auto rounded-md p-4"><!--信息显示-->
