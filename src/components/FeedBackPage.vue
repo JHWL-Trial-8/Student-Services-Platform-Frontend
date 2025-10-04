@@ -114,8 +114,7 @@
                                                 </tr>
                                             </thead>
                                                 <tbody class="bg-white divide-y divide-gray-200 min-w-full">
-                                                    <tr v-for="ticket in tickets" :key="ticket.id" class="hover:bg-gray-50 cursor-pointer"
-                                                        @click="viewTicket(ticket.id)">
+                                                    <tr v-for="ticket in tickets" :key="ticket.id" class="hover:bg-gray-50 cursor-pointer">
                                                         <td class="px-6 py-4 whitespace-nowrap">
                                                             <div class="flex items-center">
                                                                 <div>
@@ -126,6 +125,8 @@
                                                                             text-xs font-medium bg-red-100 text-red-800">紧急</span>
                                                                         <span v-if="ticket.is_anonymous" class="inline-flex items-center px-2 py-1 
                                                                             rounded-sm text-xs font-medium bg-gray-100 text-gray-800">匿名</span>
+                                                                        <span v-else class="inline-flex items-center px-2 py-1 
+                                                                            rounded-sm text-xs font-medium bg-gray-100 text-gray-800">用户:{{ ticket.id }}</span>
                                                                         <span v-if="ticket.image_ids" class="inline-flex items-center px-2 py-1 
                                                                             rounded-sm text-xs font-medium bg-gray-100 text-gray-800">包含图片</span>
                                                                     </div>
@@ -149,7 +150,7 @@
                                                                 class="text-blue-600 hover:text-blue-900 mr-3">
                                                                 认领
                                                             </button>
-                                                            <button v-if="ticket.assigned_admin_id === currentUserId" @click="unclaimTicket(ticket.id)"
+                                                            <button v-if="ticket.assigned_admin_id === currentUserId && ticket.status !== 'RESOLVED'" @click="unclaimTicket(ticket.id)"
                                                                 class="text-blue-600 hover:text-blue-900 mr-3">
                                                                 撤销认领
                                                             </button>
@@ -191,9 +192,10 @@
                 </div>
             </div>
         </div>
-        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="iserror">
+
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="iserror"><!--错误信息弹窗-->
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-                <div class="text-red-500 font-semibold text-center py-2">获取历史记录失败！<hr></div>
+                <div class="text-red-500 font-semibold text-center py-2">操作失败！<hr></div>
                 <div class="text-gray-500 text-center">{{ errormessages }}</div>
                 <div class="flex items-center justify-center py-2">
                     <button 
@@ -227,8 +229,11 @@
                             <span v-if="ticket_details.is_anonymous" class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
                                 匿名
                             </span>
+                            <span v-else class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
+                                用户:{{ ticket_details.id }}
+                            </span>
                             <span v-if="!ticket_details.assigned_admin_id" class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
-                                未处理
+                                未认领
                             </span>
                     </div>
 
@@ -294,11 +299,30 @@
                     </div>
                 </div>
 
-                <button @click="addMessage = true"
+                
+                <div class="flex justify-between mt-4">
+                    <button @click="addMessage = true"
                         class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
                         添加回复
-                </button>
+                    </button>
 
+                    <button @click="addingspam_flag = true" v-if="ticket_details.status !== 'RESOLVED' 
+                    && ticket_details.status !== 'SPAM_PENDING' && ticket_details.status !== 'SPAM_CONFIRMED' && 
+                    ticket_details.status !== 'SPAM_REJECTED' && ticket_details.status !== 'CLOSED'"
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+                        标记为垃圾信息
+                    </button>
+
+                    <button @click="solved()" v-if="ticket_details.status !== 'RESOLVED' 
+                    && ticket_details.status !== 'SPAM_PENDING' && ticket_details.status !== 'SPAM_CONFIRMED' && 
+                    ticket_details.status !== 'SPAM_REJECTED' && ticket_details.status !== 'CLOSED'"
+                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+                        标记已处理
+                    </button>
+                </div>
+                <div v-if="resolvedetails" class="mt-2">
+                    <p class="text-red-500 text-sm mt-2 text-center">{{ resolvedetails }}</p>
+                </div>
                 <div class="flex items-center justify-center py-2">
                     <button type="button" @click="details=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded  
                     hover:bg-gray-400 transition">返回</button>
@@ -325,6 +349,26 @@
                     hover:bg-gray-400 transition">取消</button>
                     <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded 
                         hover:bg-blue-600 transition" @click="addfeedbackmessage">
+                    提交</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="addingspam_flag"><!--标记垃圾信息弹窗-->
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                <div class=" font-semibold text-center text-lg py-2">备注标记理由</div>
+                <hr>
+                <div class="mt-4">
+                    <textarea v-model="newMessageBody" rows="6" class="w-full p-2 border border-gray-300 rounded-lg"
+                        placeholder="请输入您的理由..."></textarea>
+                </div>
+                <span v-if="addingingspam_flag" class="text-blue-500">正在上传申请...</span>
+                <span v-if="completetime" class="text-green-500">申请成功，状态: {{completetime}}</span>
+                <div class="flex items-center justify-center space-x-4 mt-4">
+                    <button type="button" @click="addingspam_flag=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                    hover:bg-gray-400 transition">取消</button>
+                    <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded 
+                        hover:bg-blue-600 transition" @click="addspam_flag">
                     提交</button>
                 </div>
             </div>
@@ -359,7 +403,7 @@
                 },
                 pagination: {//分页信息
                     page: 1,
-                    page_size: 20,
+                    page_size: 5,
                     total: 0
                 },
                 stats: {//统计信息
@@ -368,22 +412,25 @@
                     urgent: 0,
                     assigned_to_me: 0
                 },
-                iserror: false,
-                errormessages: '',
-                ticket_details:{},
-                details:false,
-                loading_details:false,
-                complete:false,
-                addMessage:false,
-                newMessageBody:'',
-                addingmessage:false,
-                completetime:'',
-                is_internal_note:false,
-                currentUserId: parseInt(localStorage.getItem('id'))
+                iserror: false,//是否出错
+                errormessages: '',//错误信息
+                ticket_details:{},//工单详细信息
+                details:false,//是否显示详细信息
+                loading_details:false,//是否正在加载详细信息
+                complete:false,//是否已完成
+                addMessage:false,//是否显示添加消息的弹窗
+                newMessageBody:'',//新消息内容
+                addingmessage:false,//是否正在上传消息
+                completetime:'',//完成时间
+                is_internal_note:false,//是否为内部备注
+                currentUserId: parseInt(localStorage.getItem('id')),//当前用户ID
+                addingspam_flag:false,//是否正在添加垃圾邮件标记
+                addingingspam_flag:false,//是否正在上传垃圾邮件标记
+                resolvedetails:'',//是否显示已解决的详细信息
             }
         },
         computed: {
-            queryParams() {
+            queryParams() {// 查询参数
                 const params = {
                     page: this.pagination.page,
                     page_size: this.pagination.page_size
@@ -399,7 +446,33 @@
             }
         },
         methods:{
-            async unclaimTicket(ticket) {
+            async solved(){
+                this.resolvedetails = ''
+                try {
+                    await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${this.ticket_details.id}/resolve`)
+                    this.ticket_detail(this.ticket_details.id)
+                } catch (error) {
+                    this.resolvedetails = error.response?.data?.details || '请检查网络连接'
+                    console.error('撤销认领工单失败:', error)
+                }
+            },
+            async addspam_flag(){//添加垃圾邮件标记
+                this.addingingspam_flag = true
+                this.completetime=''
+                try {
+                    const response= await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${this.ticket_details.id}/spam-flag`,{
+                        reason: this.newMessageBody
+                    })
+                    this.addingingspam_flag = false
+                    this.completetime = response.data.status
+
+                } catch (error) {
+                    this.iserror = true
+                    this.errormessages = error.response?.data?.message || '请检查网络连接'
+                    console.error('添加垃圾邮件标记失败:', error)
+                }
+            },
+            async unclaimTicket(ticket) {//撤销认领工单
                 try {
                     await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${ticket}/unclaim`,{},
                     {headers: {
@@ -413,7 +486,7 @@
                     console.error('撤销认领工单失败:', error)
                 }
             },
-            async claimTicket(ticket) {
+            async claimTicket(ticket) {//认领工单
                 try {
                     await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${ticket}/claim`,{},
                     {headers: {
@@ -424,10 +497,12 @@
                     this.fetchTickets()
 
                 } catch (error) {
+                    this.iserror = true
+                    this.errormessages = error.response?.data?.error || '请检查网络连接'
                     console.error('撤销认领工单失败:', error)
                 }
             },
-            async addfeedbackmessage(){
+            async addfeedbackmessage(){//添加反馈消息
                 this.addingmessage = true
                 this.completetime = ''
                 try{
@@ -444,7 +519,7 @@
                     this.addingmessage = false
                 }
             },
-            details_show(){
+            details_show(){//显示详细信息
                 this.details=true
             },
             async ticket_detail(id){//获取详细信息
@@ -452,6 +527,7 @@
                 this.completetime = ''
                 this.ticket_details = {}
                 this.complete = false
+                this.resolvedetails = ''
                 try{
                     this.loading = true
                     const response = await axios.get(`http://46.203.124.16:8080/api/v1/tickets/${id}`)
@@ -466,22 +542,20 @@
                     this.errormessages = error.response?.data?.message || '请检查网络连接'
                 }
             },
-            prevPage() {
+
+            prevPage() {//上一页
                 if (this.pagination.page > 1) {
                     this.pagination.page--
                     this.fetchTickets()
                 }
             },
-
-            nextPage() {
+            nextPage() {//下一页
                 if (this.pagination.page < Math.ceil(this.pagination.total / this.pagination.page_size)) {
                     this.pagination.page++
                     this.fetchTickets()
                 }
             },
-            async viewTicket(ticketId){
-                // 这里可以添加查看工单的逻辑
-            },
+
             async fetchTickets() {//获取反馈记录
                 this.loading = true
                 try {
@@ -511,7 +585,10 @@
                     'CLAIMED': '已认领',
                     'IN_PROGRESS': '处理中',
                     'RESOLVED': '已解决',
-                    'CLOSED': '已关闭'
+                    'CLOSED': '已关闭',
+                    'SPAM_PENDING': '超管审核中',
+                    'SPAM_CONFIRMED': '垃圾信息',
+                    'SPAM_REJECTED': '非垃圾信息'
                 }
                 return statusMap[status] || status
             },
@@ -522,7 +599,8 @@
                     'CLAIMED': 'bg-yellow-100 text-yellow-800',
                     'IN_PROGRESS': 'bg-purple-100 text-purple-800',
                     'RESOLVED': 'bg-green-100 text-green-800',
-                    'CLOSED': 'bg-gray-100 text-gray-800'
+                    'CLOSED': 'bg-gray-100 text-gray-800',
+                    'SPAM_CONFIRMED':'bg-yellow-100 text-gray-800'
                 }
                 return classMap[status] || 'bg-gray-100 text-gray-800'
             }, 
@@ -543,11 +621,10 @@
                 this.fetchTickets()
             },
         },
-        mounted(){
+        mounted(){//每次进入获取一次工单列表
             this.fetchTickets()
         },
-        watch: {
-            // 当分页参数变化时自动获取数据
+        watch: {// 当分页参数变化时自动获取数据
             'pagination.page'() {
                 this.fetchTickets()
             },
