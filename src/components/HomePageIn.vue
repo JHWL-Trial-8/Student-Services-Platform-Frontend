@@ -20,7 +20,7 @@
                 </div>
                 <div class="flex-1 p-10">
                 <div class="h-auto w-auto bg-white rounded-lg shadow-lg"><!--主体内容，反馈的历史记录及通知-->
-                    <div class=" font-semibold text-black text-center p-2">我的反馈记录 (共{{ total }}条)<hr></div>
+                    <div class=" font-semibold text-black text-center p-2">我的反馈记录 (共{{ pagination.total }}条)<hr></div>
                         <div v-for="ticket in items" :key="ticket.id" class="rounded p-4 mb-3">
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
@@ -206,7 +206,7 @@
             </div>
         </div>
 
-        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="iserror">
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="iserror"><!--错误信息弹窗-->
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
                 <div class="text-red-500 font-semibold text-center py-2">获取历史记录失败！<hr></div>
                 <div class="text-gray-500 text-center">{{ errormessages }}</div>
@@ -255,6 +255,15 @@
                     total: 0
                 },
             };
+        },
+        computed: {
+            queryParams() {// 查询参数
+                const params = {
+                    page: this.pagination.page,
+                    page_size: this.pagination.page_size
+                }
+                return params
+            }
         },
         components:{
             PageFoot,//脚标导入，虽然只有一行但还是想这么写
@@ -325,17 +334,13 @@
             async fetchTickets() {
                 try {
                     const response = await axios.get('http://46.203.124.16:8080/api/v1/tickets',{
-                        params: {
-                            page: this.page,
-                            page_size: this.page_size
-                        },
+                        params: this.queryParams
                     })
                     // response.data 包含 items, page, page_size, total
                     this.items = response.data.items
-                    this.total = response.data.total
-                    this.page = response.data.page
-                    this.page_size = response.data.page_size
-        
+                    this.pagination.page = response.data.page
+                    this.pagination.page_size = response.data.page_size
+                    this.pagination.total = response.data.total
                 } catch (error) {
                     this.iserror = true
                     this.errormessages = error.response?.data?.message || '请检查网络连接'

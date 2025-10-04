@@ -467,6 +467,7 @@
                     })
                     this.addingingspam_flag = false
                     this.completetime = response.data.status
+                    this.newMessageBody = ''
 
                 } catch (error) {
                     this.iserror = true

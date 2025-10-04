@@ -27,7 +27,7 @@
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                     <p class="mt-2 text-gray-600">加载中...</p>
                 </div>
-                <div class=" font-semibold text-black text-center p-2">预设反馈信息 (共{{ total }}条)<hr></div>
+                <div class=" font-semibold text-black text-center p-2">预设反馈信息 (共{{ pagination.total }}条)<hr></div>
                 <div v-for="ticket in items" :key="ticket.id" class="rounded p-4 mb-3">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
@@ -43,7 +43,8 @@
                             <div>{{ formatDate(ticket.created_at) }}</div>
                             <div>预设信息ID: {{ ticket.id }}</div>
                             <button class="text-gray-500 hover:text-gray-700" >修改</button>
-                            <button class="text-red-500 hover:text-red-700" >删除</button>
+                            <br>
+                            <button class="text-red-500 hover:text-red-700" @click="warning=true">删除</button>
                         </div>
                     </div>
                     <hr>
@@ -55,6 +56,24 @@
                     </button>
                 </div>
                 <div v-if="items.length === 0" class="text-center py-4 text-lg">暂无反馈记录</div>
+                    <div  class="px-6 py-4 border-t border-gray-200"><!--分页组件-->
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-700">
+                                第 {{ pagination.page }} 页，共 {{ Math.ceil(pagination.total / pagination.page_size) }} 页
+                            </div>
+                            <div class="flex space-x-2">
+                                <button @click="prevPage" :disabled="pagination.page === 1" class="px-3 py-1 border border-gray-300 rounded-md
+                                    text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    上一页
+                                </button>
+                                <button @click="nextPage" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.page_size)"
+                                    class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white 
+                                    hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    下一页
+                                </button>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -82,6 +101,21 @@
         </div>
     </div>
 
+    <div class="fixed inset-0 flex items-center justify-center z-50" v-if="warning"><!--添加预设信息弹窗-->
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class=" font-semibold text-center text-lg py-2">确认删除？</div>
+            <div class="text-center py-2 text-gray-400">此操作不可逆！</div>
+            <hr>
+            <div class="flex items-center justify-center space-x-4 mt-4">
+                <button type="button" @click="warning=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                hover:bg-gray-400 transition">取消</button>
+                <button type="button" class="bg-green-500 text-white py-2 px-4 rounded 
+                     hover:bg-blue-600 transition" @click="">
+                确认</button>
+            </div>
+        </div>
+    </div>
+
     <PageFoot></PageFoot>
 </template>
 <script>
@@ -99,9 +133,6 @@
                 username: localStorage.getItem('username'),
                 role: localStorage.getItem('role'),
                 items: [],
-                page: 1,
-                page_size: 10,
-                total: 0,
                 iserror: false,
                 errormessages: '',
                 addMessage: false,
@@ -109,10 +140,37 @@
                 addingmessage: false,
                 completetime: '',
                 title:'',
-                loading:false
+                loading:false,
+                warning: false,
+                pagination: {//分页信息
+                    page: 1,
+                    page_size: 5,
+                    total: 0
+                },
+            }
+        },
+        computed: {
+            queryParams() {// 查询参数
+                const params = {
+                    page: this.pagination.page,
+                    page_size: this.pagination.page_size
+                }
+                return params
             }
         },
         methods: {
+            prevPage() {//上一页
+                if (this.pagination.page > 1) {
+                    this.pagination.page--
+                    this.fetchTickets()
+                }
+            },
+            nextPage() {//下一页
+                if (this.pagination.page < Math.ceil(this.pagination.total / this.pagination.page_size)) {
+                    this.pagination.page++
+                    this.fetchTickets()
+                }
+            },
             async addcannedreply(){
                 this.addingmessage = true;
                 this.iserror = false;
@@ -143,16 +201,13 @@
                 this.loading = true;
                 try {
                     const response = await axios.get('http://46.203.124.16:8080/api/v1/canned-replies',{
-                        params: {
-                            page: this.page,
-                            page_size: this.page_size
-                        },
+                        params: this.queryParams
                     })
                     // response.data 包含 items, page, page_size, total
                     this.items = response.data.items
-                    this.total = response.data.total
-                    this.page = response.data.page
-                    this.page_size = response.data.page_size
+                    this.pagination.total = response.data.total
+                    this.pagination.page = response.data.page
+                    this.pagination.page_size = response.data.page_size
                     this.loading = false
         
                 } catch (error) {
