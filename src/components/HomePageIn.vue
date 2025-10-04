@@ -52,6 +52,24 @@
                         </div>
                     <div v-if="items.length === 0" class="text-center py-4 text-lg">暂无反馈记录</div>
                 </div><!--主体内容，反馈的历史记录及通知-->
+                <div v-if="!loading && items.length > 0" class="px-6 py-4 border-t border-gray-200"><!--分页组件-->
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            第 {{ pagination.page }} 页，共 {{ Math.ceil(pagination.total / pagination.page_size) }} 页
+                        </div>
+                        <div class="flex space-x-2">
+                            <button @click="prevPage" :disabled="pagination.page === 1" class="px-3 py-1 border border-gray-300 rounded-md
+                                text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                上一页
+                            </button>
+                            <button @click="nextPage" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.page_size)"
+                                class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white 
+                                hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                下一页
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -231,6 +249,11 @@
                 addMessage:false,
                 addingmessage:false,
                 completetime:'',
+                pagination: {//分页信息
+                    page: 1,
+                    page_size: 5,
+                    total: 0
+                },
             };
         },
         components:{
@@ -239,6 +262,18 @@
             ImageDisplay//加载图片的组件，但是是抄AI的
         },
         methods:{
+            prevPage() {//上一页
+                if (this.pagination.page > 1) {
+                    this.pagination.page--
+                    this.fetchTickets()
+                }
+            },
+            nextPage() {//下一页
+                if (this.pagination.page < Math.ceil(this.pagination.total / this.pagination.page_size)) {
+                    this.pagination.page++
+                    this.fetchTickets()
+                }
+            },
             async addfeedbackmessage(){
                 this.addingmessage = true
                 this.completetime = ''
@@ -258,13 +293,16 @@
             details_show(){
                 this.details=true
             },
-            getStatusText(status) {
+            getStatusText(status) {//获取状态文本
                 const statusMap = {
                     'NEW': '新建',
                     'CLAIMED': '已认领',
                     'IN_PROGRESS': '处理中',
                     'RESOLVED': '已解决',
-                    'CLOSED': '已关闭'
+                    'CLOSED': '已关闭',
+                    'SPAM_PENDING': '超管审核中',
+                    'SPAM_CONFIRMED': '垃圾信息',
+                    'SPAM_REJECTED': '非垃圾信息'
                 }
                 return statusMap[status] || status
             },
