@@ -321,6 +321,12 @@
                         class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
                         标记已处理
                     </button>
+
+                    <button @click="close()" v-if="ticket_details.status === 'RESOLVED'"
+                        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+                        关闭工单
+                    </button>
+
                 </div>
                 <div v-if="resolvedetails" class="mt-2">
                     <p class="text-red-500 text-sm mt-2 text-center">{{ resolvedetails }}</p>
@@ -448,7 +454,16 @@
             }
         },
         methods:{
-            async solved(){
+            async close(){//关闭工单
+                try{
+                    await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${this.ticket_details.id}/close`)
+                    this.ticket_detail(this.ticket_details.id)
+                }catch(error){
+                    this.errormessages = error.response?.data?.details || '请检查网络连接'
+                    this.iserror = true
+                }
+            },
+            async solved(){//标记已解决
                 this.resolvedetails = ''
                 try {
                     await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${this.ticket_details.id}/resolve`)

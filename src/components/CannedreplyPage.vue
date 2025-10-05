@@ -42,7 +42,7 @@
                         <div class="text-right text-sm text-gray-500 ml-4">
                             <div>{{ formatDate(ticket.created_at) }}</div>
                             <div>预设信息ID: {{ ticket.id }}</div>
-                            <button class="text-gray-500 hover:text-gray-700" >修改</button>
+                            <button class="text-gray-500 hover:text-gray-700" @click="editMessage(ticket.id)">修改</button>
                             <br>
                             <button class="text-red-500 hover:text-red-700" @click="warning=true">删除</button>
                         </div>
@@ -101,7 +101,30 @@
         </div>
     </div>
 
-    <div class="fixed inset-0 flex items-center justify-center z-50" v-if="warning"><!--添加预设信息弹窗-->
+    <div class="fixed inset-0 flex items-center justify-center z-50" v-if="update"><!--修改预设信息弹窗-->
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class=" font-semibold text-center text-lg py-2">修改预设信息</div>
+            <hr>
+            <div class="mt-4">
+                <input type="text" v-model="title" placeholder="请输入预设信息标题..." class="border border-gray-300 w-full rounded-lg p-2">
+            </div>
+            <div class="mt-4">
+                <textarea v-model="newMessageBody" rows="6" class="w-full p-2 border border-gray-300 rounded-lg"
+                    placeholder="请输入预设信息内容..."></textarea>
+            </div>
+            <span v-if="addingmessage" class="text-blue-500">正在修改预设信息...</span>
+            <span v-if="completetime" class="text-green-500">修改预设信息成功，时间: {{ formatDate(completetime) }}</span>
+            <div class="flex items-center justify-center space-x-4 mt-4">
+                <button type="button" @click="update=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                hover:bg-gray-400 transition">取消</button>
+                <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded 
+                     hover:bg-blue-600 transition" @click="updateCannedReply(messageid)">
+                提交</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 flex items-center justify-center z-50" v-if="warning"><!--删除预设信息弹窗-->
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
             <div class=" font-semibold text-center text-lg py-2">确认删除？</div>
             <div class="text-center py-2 text-gray-400">此操作不可逆！</div>
@@ -147,6 +170,8 @@
                     page_size: 5,
                     total: 0
                 },
+                update:false,
+                messageid:0,
             }
         },
         computed: {
@@ -159,6 +184,32 @@
             }
         },
         methods: {
+            editMessage(id){//编辑预设信息
+                this.messageid=id;
+                this.update=true;
+                this.newMessageBody='';
+                this.title='';
+            },
+            async updateCannedReply(id){//更新预设信息
+                this.addingmessage = true;
+                this.iserror = false;
+                try{
+                    const response = await axios.put(`http://46.203.124.16:8080/api/v1/canned-replies/${id}`, {
+                        title: this.title,
+                        body: this.newMessageBody,
+                    })
+                    this.completetime = response.data.created_at;
+                    this.newMessageBody = '';
+                    this.title = '';
+                    this.addingmessage = false;
+                    this.addMessage = false;
+                    await this.fetchData(); // 刷新列表
+                } catch (error) {
+                    this.iserror = true
+                    this.errormessages = error.response?.data?.message || '请检查网络连接'
+                    this.addingmessage = false
+                }
+            },
             prevPage() {//上一页
                 if (this.pagination.page > 1) {
                     this.pagination.page--
@@ -171,7 +222,7 @@
                     this.fetchTickets()
                 }
             },
-            async addcannedreply(){
+            async addcannedreply(){//添加预设信息
                 this.addingmessage = true;
                 this.iserror = false;
                 this.completetime = '';
@@ -197,7 +248,7 @@
                     this.addingmessage = false
                 }
             },
-            async fetchData() {
+            async fetchData() {//获取预设信息列表
                 this.loading = true;
                 try {
                     const response = await axios.get('http://46.203.124.16:8080/api/v1/canned-replies',{
