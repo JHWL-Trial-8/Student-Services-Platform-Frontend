@@ -11,6 +11,8 @@
                     <hr>
                     <router-link to="/controlluser" class="py-4 my-2 text-center font-semibold" v-if="role === 'SUPER_ADMIN'">用户账号管理</router-link>
                     <hr v-if="role === 'SUPER_ADMIN'">
+                    <RouterLink class="py-4 my-2 text-center font-semibold" to="/statpage" v-if="role === 'SUPER_ADMIN'">大屏统计显示</RouterLink>
+                    <hr v-if="role === 'SUPER_ADMIN'"><!--超级管理员才显示-->
                     <div class="w-auto rounded-md p-4"><!--信息显示-->
                     <img src="../assets/JHWL-Trial-8.jpg" alt="头像" class="flex">
                 </div>
@@ -286,7 +288,7 @@
                     <p v-else>暂无回复</p>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.status === 'RESOLVED'"><!--评分信息-->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.rating"><!--评分信息-->
                     <h2 class="text-xl font-semibold text-gray-800 mb-4">评分</h2>
                     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <div class="flex items-center mb-2">

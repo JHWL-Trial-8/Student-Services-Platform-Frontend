@@ -146,7 +146,7 @@
                     <p v-else>暂无回复</p>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.rating.id"><!--评分信息-->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.rating"><!--评分信息-->
                     <h2 class="text-xl font-semibold text-gray-800 mb-4">评分</h2>
                     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <div class="flex items-center mb-2">

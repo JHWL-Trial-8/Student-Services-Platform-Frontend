@@ -33,6 +33,9 @@
                             placeholder="Password" v-model="Password" required>
                         </div>
                     </div>
+                    <div class="flex text-sm text-gray-500 px-20" v-if="loginging">
+                        登录中...
+                    </div>
                     <div class="flex text-sm text-red-500 px-20" v-if="iserror">
                         {{message}}
                     </div>
@@ -72,17 +75,20 @@
                 access_token:'',
                 userinformation:'',
                 iserror:false,
-                message:''
+                message:'',
+                loginging:false
             }
         },
         methods:{
             async login(){
                 try {
+                    this.loginging=true
                     // 1. 发送登录请求
                     const loginResponse = await axios.post('http://46.203.124.16:8080/api/v1/auth/login', {
                         email: this.Email,
                         password: this.Password
                     });
+                    this.loginging=false
                     const access_token = loginResponse.data.access_token;
                     // 2. 保存token
                     localStorage.setItem('access_token', access_token);
@@ -107,8 +113,9 @@
                     }
                 }
                 catch(error){
+                    this.loginging=false
                     this.iserror=true
-                    this.message=error.response.data.message
+                    this.message=error.response.data.error
                 }
             },
             register(){
