@@ -148,11 +148,11 @@
                                                             {{ formatDate(ticket.created_at) }}
                                                         </td>
                                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                            <button v-if="!ticket.assigned_admin_id" @click="claimTicket(ticket.id)"
+                                                            <button v-if="!ticket.assigned_admin_id && ticket.status === 'NEW' " @click="claimTicket(ticket.id)"
                                                                 class="text-blue-600 hover:text-blue-900 mr-3">
                                                                 认领
                                                             </button>
-                                                            <button v-if="ticket.assigned_admin_id === currentUserId && ticket.status !== 'RESOLVED'" @click="unclaimTicket(ticket.id)"
+                                                            <button v-if="ticket.assigned_admin_id === currentUserId && ticket.status !== 'RESOLVED' && ticket.status !== 'CLOSED'" @click="unclaimTicket(ticket.id)"
                                                                 class="text-blue-600 hover:text-blue-900 mr-3">
                                                                 撤销认领
                                                             </button>
@@ -286,7 +286,7 @@
                     <p v-else>暂无回复</p>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.rating"><!--评分信息-->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.status === 'RESOLVED'"><!--评分信息-->
                     <h2 class="text-xl font-semibold text-gray-800 mb-4">评分</h2>
                     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <div class="flex items-center mb-2">
@@ -343,8 +343,8 @@
                 <div class=" font-semibold text-center text-lg py-2">添加回复</div>
                 <hr>
                 <div class="mt-4">
-                    <textarea v-model="newMessageBody" rows="6" class="w-full p-2 border border-gray-300 rounded-lg"
-                        placeholder="请输入您的回复内容..."></textarea>
+                    <textarea v-model="newMessageBody" rows="6" class="w-full p-2 border 
+                    border-gray-300 rounded-lg" placeholder="请输入回复内容..."></textarea>
                 </div>
                 <div class="mt-4 flex items-center space-x-2">
                     <input type="checkbox" v-model="is_internal_note" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
@@ -355,9 +355,64 @@
                 <div class="flex items-center justify-center space-x-4 mt-4">
                     <button type="button" @click="addMessage=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
                     hover:bg-gray-400 transition">取消</button>
+                    <button type="button" @click="usecannedreplay" class="bg-green-300 text-gray-700 py-2 px-4 rounded 
+                    hover:bg-green-400 transition">使用预设信息</button>
                     <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded 
                         hover:bg-blue-600 transition" @click="addfeedbackmessage">
                     提交</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="isuescannedreplay"><!--使用预设信息弹窗-->
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                <div class=" font-semibold text-center text-lg py-2">选择预设信息</div>
+                <hr>
+
+            <div class=" font-semibold text-black text-center p-2">预设反馈信息 (共{{ pagination2.total }}条)<hr></div>
+                <div v-for="ticket in cannedreplies" :key="ticket.id" class="rounded p-4 mb-3">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold mb-2">{{ ticket.title }}</h3>
+                            <p class="text-gray-600 mb-3">{{ ticket.body }}</p>
+                            <div class="flex flex-wrap gap-2 mb-2">
+                                <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
+                                    管理员id:{{ ticket.admin_user_id }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-right text-sm text-gray-500 ml-4">
+                            <div>{{ formatDate(ticket.created_at) }}</div>
+                            <div>预设信息ID: {{ ticket.id }}</div>
+                            <button @click="selectCannedReply(ticket)">选择</button>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div v-if="cannedreplies.length === 0" class="text-center py-4 text-lg">暂无反馈记录</div>
+                <div  class="px-6 py-4 border-t border-gray-200"><!--分页组件-->
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            第 {{ pagination2.page }} 页，共 {{ Math.ceil(pagination2.total / pagination2.page_size) }} 页
+                        </div>
+                        <div class="flex space-x-2">
+                            <button @click="prevPage2" :disabled="pagination2.page === 1" class="px-3 py-1 border border-gray-300 rounded-md
+                                text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                上一页
+                            </button>
+                            <button @click="nextPage2" :disabled="pagination2.page >= Math.ceil(pagination2.total / pagination2.page_size)"
+                                class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white 
+                                hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                下一页
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="isloadingcannedreplies" class="text-center">正在加载预设信息...</div>
+                <div class="flex items-center justify-center space-x-4 mt-4">
+                    <button type="button" @click="isuescannedreplay=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                    hover:bg-gray-400 transition">取消</button>
                 </div>
             </div>
         </div>
@@ -378,6 +433,20 @@
                     <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded 
                         hover:bg-blue-600 transition" @click="addspam_flag">
                     提交</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="warning"><!--提示是否覆盖弹窗-->
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                <div class=" font-semibold text-center text-lg py-2">是否覆盖？</div>
+                <hr>
+                <div class="flex items-center justify-center space-x-4 mt-4">
+                    <button type="button" @click="warning=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                    hover:bg-gray-400 transition">取消</button>
+                    <button type="button" class="bg-red-500 text-white py-2 px-4 rounded 
+                        hover:bg-red-600 transition" @click="confrimslestcannedreply">
+                    确认</button>
                 </div>
             </div>
         </div>
@@ -414,6 +483,11 @@
                     page_size: 5,
                     total: 0
                 },
+                pagination2: {//预设信息分页信息
+                    page: 1,
+                    page_size: 5,
+                    total: 0
+                },
                 stats: {//统计信息
                     total: 0,
                     new: 0,
@@ -435,6 +509,11 @@
                 addingspam_flag:false,//是否正在添加垃圾邮件标记
                 addingingspam_flag:false,//是否正在上传垃圾邮件标记
                 resolvedetails:'',//是否显示已解决的详细信息
+                isuescannedreplay:false,//是否显示预设反馈信息
+                cannedreplies:[],//预设反馈信息
+                isloadingcannedreplies:false,//是否正在加载预设反馈信息
+                warning:false, //是否显示警告信息
+                selectedCannedReply:[]
             }
         },
         computed: {
@@ -451,9 +530,45 @@
                 if (this.filters.assigned_to_me) params.assigned_to_me = true
 
                 return params
+            },
+            queryParams2() {// 查询参数
+                const params = {
+                    page: this.pagination2.page,
+                    page_size: this.pagination2.page_size
+                }
+                return params
             }
         },
         methods:{
+            selectCannedReply(ticket) {
+                this.selectedCannedReply = ticket
+                if(this.newMessageBody!=this.selectedCannedReply.body){
+                    this.warning=true
+                    return
+                }
+                this.newMessageBody = ticket.body
+                this.isuescannedreplay = false
+            },
+            confrimslestcannedreply(){
+                this.warning=false
+                this.newMessageBody = this.selectedCannedReply.body
+                this.isuescannedreplay = false
+            },
+            usecannedreplay(){
+                this.isuescannedreplay = true
+                this.getcannedreplay()
+            },
+            async getcannedreplay(){
+                this.isloadingcannedreplies = true
+                try{
+                    const response = await axios.get('http://46.203.124.16:8080/api/v1/canned-replies',{params:this.queryParams2})
+                    this.cannedreplies = response.data.items || []
+                    this.isloadingcannedreplies = false
+                }catch(error){
+                    this.errormessages = error.response?.data?.details || '请检查网络连接'
+                    this.iserror = true
+                }
+            },
             async close(){//关闭工单
                 try{
                     await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${this.ticket_details.id}/close`)
@@ -571,6 +686,19 @@
                 if (this.pagination.page < Math.ceil(this.pagination.total / this.pagination.page_size)) {
                     this.pagination.page++
                     this.fetchTickets()
+                }
+            },
+
+            prevPage2() {//上一页
+                if (this.pagination2.page > 1) {
+                    this.pagination2.page--
+                    this.getcannedreplay()
+                }
+            },
+            nextPage2() {//下一页
+                if (this.pagination2.page < Math.ceil(this.pagination2.total / this.pagination2.page_size)) {
+                    this.pagination2.page++
+                    this.getcannedreplay()
                 }
             },
 

@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        <div class="flex-1 p-10">
+        <div class="flex-1 p-10"><!--内容区域-->
             <div class="h-auto w-auto bg-white rounded-lg shadow-lg">
                 <div v-if="loading" class="p-8 text-center">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -44,7 +44,7 @@
                             <div>预设信息ID: {{ ticket.id }}</div>
                             <button class="text-gray-500 hover:text-gray-700" @click="editMessage(ticket.id)">修改</button>
                             <br>
-                            <button class="text-red-500 hover:text-red-700" @click="warning=true">删除</button>
+                            <button class="text-red-500 hover:text-red-700" @click="deleteMessage(ticket.id)">删除</button>
                         </div>
                     </div>
                     <hr>
@@ -56,26 +56,27 @@
                     </button>
                 </div>
                 <div v-if="items.length === 0" class="text-center py-4 text-lg">暂无反馈记录</div>
-                    <div  class="px-6 py-4 border-t border-gray-200"><!--分页组件-->
-                        <div class="flex items-center justify-between">
-                            <div class="text-sm text-gray-700">
-                                第 {{ pagination.page }} 页，共 {{ Math.ceil(pagination.total / pagination.page_size) }} 页
-                            </div>
-                            <div class="flex space-x-2">
-                                <button @click="prevPage" :disabled="pagination.page === 1" class="px-3 py-1 border border-gray-300 rounded-md
-                                    text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    上一页
-                                </button>
-                                <button @click="nextPage" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.page_size)"
-                                    class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white 
-                                    hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                                    下一页
-                                </button>
-                            </div>
+                <div  class="px-6 py-4 border-t border-gray-200"><!--分页组件-->
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            第 {{ pagination.page }} 页，共 {{ Math.ceil(pagination.total / pagination.page_size) }} 页
+                        </div>
+                        <div class="flex space-x-2">
+                            <button @click="prevPage" :disabled="pagination.page === 1" class="px-3 py-1 border border-gray-300 rounded-md
+                                text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                上一页
+                            </button>
+                            <button @click="nextPage" :disabled="pagination.page >= Math.ceil(pagination.total / pagination.page_size)"
+                                class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white 
+                                hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                下一页
+                            </button>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
+
     </div>
 
     <div class="fixed inset-0 flex items-center justify-center z-50" v-if="addMessage"><!--添加预设信息弹窗-->
@@ -133,7 +134,7 @@
                 <button type="button" @click="warning=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
                 hover:bg-gray-400 transition">取消</button>
                 <button type="button" class="bg-green-500 text-white py-2 px-4 rounded 
-                     hover:bg-blue-600 transition" @click="">
+                     hover:bg-blue-600 transition" @click="deleteCannedReply(messageid)">
                 确认</button>
             </div>
         </div>
@@ -184,13 +185,32 @@
             }
         },
         methods: {
+            deleteMessage(id){//删除预设信息
+                this.messageid=id;
+                this.warning=true;
+            },
+            async deleteCannedReply(id){//删除预设信息
+                this.iserror = false;
+                try{
+                    await axios.delete(`http://46.203.124.16:8080/api/v1/canned-replies/${id}`)
+                    this.fetchData(); // 刷新列表
+                    this.warning=false;
+                } catch (error) {
+                    this.iserror = true
+                    this.errormessages = error.response?.data?.message || '请检查网络连接'
+                } finally {
+                    this.addingmessage = false
+                }
+            },
             editMessage(id){//编辑预设信息
                 this.messageid=id;
                 this.update=true;
                 this.newMessageBody='';
+                this.completetime = '';
                 this.title='';
             },
             async updateCannedReply(id){//更新预设信息
+                this.completetime = '';
                 this.addingmessage = true;
                 this.iserror = false;
                 try{
