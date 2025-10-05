@@ -583,6 +583,7 @@
                 try {
                     await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${this.ticket_details.id}/resolve`)
                     this.ticket_detail(this.ticket_details.id)
+                    this.fetchTickets()
                 } catch (error) {
                     this.resolvedetails = error.response?.data?.details || '请检查网络连接'
                     console.error('撤销认领工单失败:', error)

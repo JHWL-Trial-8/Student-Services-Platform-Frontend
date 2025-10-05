@@ -146,7 +146,7 @@
                     <p v-else>暂无回复</p>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.rating"><!--评分信息-->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6" v-if="ticket_details.rating.id"><!--评分信息-->
                     <h2 class="text-xl font-semibold text-gray-800 mb-4">评分</h2>
                     <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <div class="flex items-center mb-2">
@@ -164,7 +164,7 @@
                 <div class="bg-white rounded-lg shadow-md p-6"><!--操作区域-->
                     <h2 class="text-xl font-semibold text-gray-800 mb-4">操作</h2>
                     <div class="flex space-x-4">
-                        <button v-if="ticket_details.status === 'RESOLVED' && !ticket_details.rating" @click="showRatingDialog = true"
+                        <button v-if="ticket_details.status === 'RESOLVED' && !ticket_details.rating.id" @click="giverate"
                             class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-300">
                             评价服务
                         </button>
@@ -184,6 +184,43 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+        <div class="fixed inset-0 flex items-center justify-center z-50" v-if="showRatingDialog"><!--评分弹窗-->
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">服务评价</h3>
+    
+                <!-- 星级评分部分 -->
+                <div class="flex items-center justify-between mb-6">
+                    <label class="text-gray-700 font-medium flex-shrink-0 mr-4">总体满意度：</label>
+                    <div class="flex items-center space-x-1">
+                        <button v-for="star in 5":key="star" type="button" class="text-2xl focus:outline-none":class="[star <= currentRating ? 
+                        'text-yellow-400 transform scale-110' : 'text-gray-300 hover:text-yellow-300']" 
+                        @click="setRating(star)">★</button>
+                    </div>
+                    <span class="text-gray-600 font-semibold ml-4 min-w-12">{{ currentRating }}/5</span>
+                </div>
+
+                <!-- 详细评价部分 -->
+                <div v-if="currentRating > 0" class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">详细评价（可选）：</label>
+                    <textarea v-model="feedbackText" placeholder="请分享您的具体感受和建议..." rows="4"
+                        class="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-lg focus:outline-none 
+                        focus:ring-2 focus:ring-blue-500 focus:border-transparent "></textarea>
+                </div>
+
+                <div class="flex items-center justify-center space-x-4 mt-4">
+                    <button type="button" @click="showRatingDialog=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                    hover:bg-gray-400 transition">取消</button>
+                    <button type="button" class="bg-blue-500 text-white py-2 px-4 rounded 
+                        hover:bg-blue-600 transition" @click="uploadrating">{{ isSubmitting ? '提交中...' : '提交评价' }}
+                    </button>
+                </div>
+
+                <div v-if="showsuccessMessage" class="mt-4 text-green-500">评价提交成功!感谢您的反馈!</div>
+
+            </div>
+
         </div>
 
         <div class="fixed inset-0 flex items-center justify-center z-50" v-if="addMessage"><!--添加回复弹窗-->
@@ -208,15 +245,12 @@
 
         <div class="fixed inset-0 flex items-center justify-center z-50" v-if="iserror"><!--错误信息弹窗-->
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-                <div class="text-red-500 font-semibold text-center py-2">获取历史记录失败！<hr></div>
+                <div class="text-red-500 font-semibold text-center py-2">操作失败！<hr></div>
                 <div class="text-gray-500 text-center">{{ errormessages }}</div>
                 <div class="flex items-center justify-center py-2">
-                    <button 
-                    type="button" @click="iserror=false"
-                    class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
+                    <button type="button" @click="iserror=false" class="bg-gray-300 text-gray-700 py-2 px-4 rounded 
                     hover:bg-gray-400 transition">
-                    返回
-                    </button>
+                    返回</button>
                 </div>
             </div>
         </div>
@@ -237,9 +271,6 @@
                 iserror:false,
                 errormessages:'',
                 items: [], // 工单列表数据
-                total: 0,  // 总条数
-                page: 1,
-                page_size: 20,
                 details:false,
                 loading:false,
                 ticket_details:{},
@@ -254,6 +285,10 @@
                     page_size: 5,
                     total: 0
                 },
+                currentRating: 0,
+                feedbackText: '',
+                isSubmitting: false,
+                showsuccessMessage: false,
             };
         },
         computed: {
@@ -271,6 +306,30 @@
             ImageDisplay//加载图片的组件，但是是抄AI的
         },
         methods:{
+            async uploadrating(){//上传评分
+                try{
+                    this.isSubmitting = true
+                    await axios.post(`http://46.203.124.16:8080/api/v1/tickets/${this.ticket_details.id}/rate`, {
+                        stars: this.currentRating,
+                        comment: this.feedbackText
+                    })
+                    this.showsuccessMessage = true
+                    this.isSubmitting = false
+                } catch(error){
+                    this.iserror = true
+                    this.errormessages = error.response?.data?.error || '请检查网络连接'
+                }
+            },
+            giverate(){//给工单评分
+                this.isSubmitting = false
+                this.showsuccessMessage = false
+                this.feedbackText = ''
+                this.currentRating = 0
+                this.showRatingDialog = true
+            },
+            setRating(rating) {//设置评分
+                this.currentRating = rating;
+            },
             prevPage() {//上一页
                 if (this.pagination.page > 1) {
                     this.pagination.page--
