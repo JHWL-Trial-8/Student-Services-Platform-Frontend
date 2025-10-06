@@ -12,6 +12,8 @@
                     <hr v-if="role === 'SUPER_ADMIN'">
                     <RouterLink class="py-4 my-2 text-center font-semibold" to="/statpage" v-if="role === 'SUPER_ADMIN'">大屏统计显示</RouterLink>
                     <hr v-if="role === 'SUPER_ADMIN'"><!--超级管理员才显示-->
+                    <router-link to="/handlesapmpage" class="py-4 my-2 text-center font-semibold" v-if="role === 'SUPER_ADMIN'">处理垃圾信息信息</router-link>
+                    <hr v-if="role === 'SUPER_ADMIN'">
                     <div class="w-auto rounded-md p-4"><!--信息显示-->
                     <img src="../assets/JHWL-Trial-8.jpg" alt="头像" class="flex">
                 </div>

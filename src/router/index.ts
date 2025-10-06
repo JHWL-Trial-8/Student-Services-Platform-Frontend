@@ -12,6 +12,7 @@ import HomePageIn from '@/components/HomePageIn.vue'
 import NotLogin from '@/components/NotLogin.vue'//导入组件，这个是用来实现页面跳转的重要文件
 import CannedReplyPage from '@/components/CannedreplyPage.vue'
 import StatPage from '@/components/StatPage.vue'
+import HandleSpamPage from '@/components/HandleSpamPage.vue'
 declare module 'vue-router' {
   interface RouteMeta {
     requiresAuth: boolean
@@ -61,6 +62,10 @@ const routes: RouteRecordRaw [] = [
     component:CannedReplyPage
   },
   {
+    path:'/handlesapmpage',
+    component:HandleSpamPage
+  },
+  {
     path:'/statpage',
     component:StatPage
   },
@@ -81,7 +86,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const adminPath = ['/feedbackpage', '/controlluser','/cannedreply','/statpage']; // 需要管理员权限的路径
+  const adminPath = ['/feedbackpage', '/controlluser','/cannedreply','/statpage','/handlesapmpage']; // 需要管理员权限的路径
   const publicPaths = ['/log', '/register','/','/notlogin']; // 不需要认证的路径
   // 如果是公开路径，直接放行
   if (publicPaths.includes(to.path)){

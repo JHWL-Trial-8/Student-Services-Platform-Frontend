@@ -13,6 +13,8 @@
                 <hr>
                 <router-link to="/cannedreply" class="py-4 my-2 text-center font-semibold">预设反馈信息</router-link>
                 <hr>
+                <router-link to="/handlesapmpage" class="py-4 my-2 text-center font-semibold">处理垃圾信息信息</router-link>
+                <hr>
                 <div class="w-auto rounded-md p-4"><!--信息显示-->
                 <img src="../assets/JHWL-Trial-8.jpg" alt="头像" class="flex">
                 </div>

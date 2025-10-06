@@ -9,14 +9,16 @@
                 <hr v-if="role === 'STUDENT'">
                 <RouterLink class="py-4 my-2 text-center font-semibold" to="/up" v-if="role === 'STUDENT'">提交问题反馈</RouterLink><!--边栏内容示例，但是没有绑定页面跳转内容-->
                 <hr v-if="role === 'STUDENT'"><!--分割线-->
-                <RouterLink class="py-4 my-2 text-center font-semibold" to="/feedbackpage" v-if="role === 'ADMIN'">处理问题反馈</RouterLink>
-                <hr v-if="role === 'ADMIN'"><!--管理员才显示-->
+                <RouterLink class="py-4 my-2 text-center font-semibold" to="/feedbackpage" v-if="role === 'ADMIN' || role === 'SUPER_ADMIN'">处理问题反馈</RouterLink>
+                <hr v-if="role === 'ADMIN' || role === 'SUPER_ADMIN'"><!--管理员才显示-->
                 <RouterLink class="py-4 my-2 text-center font-semibold" to="/cannedreply" v-if="role === 'ADMIN'|| role === 'SUPER_ADMIN'">预设反馈信息</RouterLink>
                 <hr v-if="role === 'ADMIN'|| role === 'SUPER_ADMIN'"><!--管理员才显示-->
                 <RouterLink class="py-4 my-2 text-center font-semibold" to="/controlluser" v-if="role === 'SUPER_ADMIN'">用户账号管理</RouterLink>
                 <hr v-if="role === 'SUPER_ADMIN'"><!--超级管理员才显示-->
                 <RouterLink class="py-4 my-2 text-center font-semibold" to="/statpage" v-if="role === 'SUPER_ADMIN'">大屏统计显示</RouterLink>
                 <hr v-if="role === 'SUPER_ADMIN'"><!--超级管理员才显示-->
+                <router-link to="/handlesapmpage" class="py-4 my-2 text-center font-semibold" v-if="role === 'SUPER_ADMIN'">处理垃圾信息信息</router-link>
+                <hr v-if="role === 'SUPER_ADMIN'">
                 <div class="w-auto rounded-md p-4"><!--信息显示-->
                 <img src="../assets/JHWL-Trial-8.jpg" alt="头像" class="flex"><!--用户头像-->
                 </div>
