@@ -191,7 +191,7 @@
                     <p v-else>暂无回复</p>
                 </div>
 
-                <div class="flex justify-between mt-4" v-if="ticket_details.status==='SPAM_CONFIRMED'">
+                <div class="flex justify-between mt-4" v-if="ticket_details.status==='SPAM_PENDING'">
 
                     <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 
                     rounded-lg transition-colors duration-300" @click="approvespam(ticket_details.id)">
