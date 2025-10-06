@@ -390,7 +390,8 @@
                 return new Date(dateString).toLocaleString('zh-CN')
             },
 
-            async fetchTickets() {
+            async fetchTickets() {//获取历史记录
+                this.iserror = false
                 try {
                     const response = await axios.get('http://46.203.124.16:8080/api/v1/tickets',{
                         params: this.queryParams
