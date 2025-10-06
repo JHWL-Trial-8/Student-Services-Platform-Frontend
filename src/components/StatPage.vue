@@ -43,6 +43,143 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"><!-- 统计卡片 -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-lg bg-blue-100 text-blue-600 mr-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 
+                                        2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">总工单数</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ statistics.totals?.tickets || 0 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-lg bg-green-100 text-green-600 mr-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 
+                                    11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">已解决</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ statistics.totals?.resolved || 0 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-lg bg-gray-100 text-gray-600 mr-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">已关闭</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ statistics.totals?.closed || 0 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-lg bg-red-100 text-red-600 mr-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 
+                                    4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 
+                                    1.333.192 3 1.732 3z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">垃圾邮件</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ statistics.totals?.spam_confirmed || 0 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6"><!-- 图表区域 -->
+                    <div class="bg-white rounded-xl shadow-sm p-6"><!-- 分类分布 -->
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">问题分类分布</h3>
+                        <div v-if="statistics.by_category && statistics.by_category.length > 0" class="space-y-3">
+                            <div v-for="category in statistics.by_category" :key="category.category"
+                                class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <span class="font-medium text-gray-700">{{ category.category }}</span>
+                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                {{ category.count }}</span>
+                            </div>
+                        </div>
+                        <div v-else class="text-center text-gray-500 py-8">
+                            暂无分类数据
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">每日工单趋势</h3><!-- 每日趋势 -->
+                        <div v-if="statistics.daily_trend && statistics.daily_trend.length > 0" class="space-y-3">
+                            <div v-for="trend in statistics.daily_trend.slice(-7)" :key="trend.date"class="flex items-center 
+                            justify-between">
+                                <span class="text-sm text-gray-600">{{ formatDate(trend.date) }}</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-32 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" :style="{ width: calculatePercentage(trend.count) + '%' }"></div>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-700 w-8 text-right">{{ trend.count }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="text-center text-gray-500 py-8">
+                            暂无趋势数据
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6"><!-- 管理员工作量 -->
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">管理员工作量统计</h3>
+                    <div v-if="statistics.admin_workload && statistics.admin_workload.length > 0" class="overflow-x-auto">
+                        <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">管理员</th>
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">处理工单数</th>
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">占比</th>
+                                <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">进度条</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="admin in statistics.admin_workload" :key="admin.admin_id"
+                                class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="py-3 px-4 text-sm text-gray-700">{{ admin.name }}</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">{{ admin.tickets_handled }}</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">
+                                    {{ calculateAdminPercentage(admin.tickets_handled) }}%
+                                </td>
+                                <td class="py-3 px-4">
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" :style="{ width: calculateAdminPercentage(admin.tickets_handled) + '%' }"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                    <div v-else class="text-center text-gray-500 py-8">
+                        暂无管理员工作量数据
+                    </div>
+                </div>
+
+                <div v-if="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"><!-- 加载状态 -->
+                    <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
+                        <div class="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
+                        <span class="text-gray-700">加载数据中...</span>
+                    </div>
+                </div>
             </div>
         </div> 
     
