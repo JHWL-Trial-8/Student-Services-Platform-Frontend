@@ -24,8 +24,8 @@
                         <div v-for="ticket in items" :key="ticket.id" class="rounded p-4 mb-3">
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
-                                    <h3 class="text-lg font-semibold mb-2">{{ ticket.title }}</h3>
-                                    <p class="text-gray-600 mb-3">{{ ticket.content }}</p>
+                                    <h3 class="text-lg font-semibold mb-2">{{ ticket.title.substring(0, 10) }}</h3>
+                                    <p class="text-gray-600 mb-3">{{ ticket.content.substring(0, 10) }}</p>
                                     <div class="flex flex-wrap gap-2 mb-2">
                                         <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                                             {{ ticket.category }}

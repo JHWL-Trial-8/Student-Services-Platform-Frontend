@@ -124,8 +124,8 @@
                                                         <td class="px-6 py-4 whitespace-nowrap">
                                                             <div class="flex items-center">
                                                                 <div>
-                                                                    <div class="text-sm font-medium text-gray-900">{{ ticket.title }}</div>
-                                                                    <div class="text-sm text-gray-500 truncate max-w-xs">{{ ticket.content }}</div>
+                                                                    <div class="text-sm font-medium text-gray-900">{{ ticket.title.substring(0, 10) }}</div>
+                                                                    <div class="text-sm text-gray-500 truncate max-w-xs">{{ ticket.content.substring(0, 10) }}</div>
                                                                     <div class="flex items-center mt-1 space-x-2">
                                                                         <span v-if="ticket.is_urgent" class="inline-flex items-center px-2 py-1 rounded-sm 
                                                                             text-xs font-medium bg-red-100 text-red-800">紧急</span>

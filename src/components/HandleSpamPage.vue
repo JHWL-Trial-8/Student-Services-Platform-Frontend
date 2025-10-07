@@ -121,8 +121,8 @@
                 <div class=" font-semibold text-center text-lg py-2">反馈详情</div>
                 <hr>
                 <div class="mt-4" v-if="complete">
-                    <h3 class="text-lg mb-2 text-center">{{ ticket_details.title }}</h3>
-                    <p class="text-gray-600 mb-3"><strong>问题描述:</strong>{{ ticket_details.content }}</p>
+                    <h3 class="text-lg mb-2 text-center">{{ ticket_details.title.substring(0, 10) }}</h3>
+                    <p class="text-gray-600 mb-3"><strong>问题描述:</strong>{{ ticket_details.content.substring(0, 10) }}</p>
                     <div class="flex flex-wrap gap-2 mb-2">
                             <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                                 {{ ticket_details.category }}
