@@ -739,7 +739,7 @@
                     'CLOSED': '已关闭',
                     'SPAM_PENDING': '超管审核中',
                     'SPAM_CONFIRMED': '垃圾信息',
-                    'SPAM_REJECTED': '非垃圾信息'
+                    'SPAM_REJECTED': '无效信息'
                 }
                 return statusMap[status] || status
             },

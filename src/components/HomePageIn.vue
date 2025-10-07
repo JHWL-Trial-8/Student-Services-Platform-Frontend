@@ -99,6 +99,8 @@
                             </span>
                     </div>
 
+                    <div class="text-red-600 mb-3" v-if="ticket_details.status==='SPAM_REJECTED'">该工单无效，请重新提交</div>
+
                     <div v-if="ticket_details.image_ids && ticket_details.image_ids.length > 0" class="mb-6"><!--附件图片-->
                         <h2 class="text-lg font-semibold text-gray-700 mb-2">附件图片</h2>
                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -370,7 +372,7 @@
                     'CLOSED': '已关闭',
                     'SPAM_PENDING': '超管审核中',
                     'SPAM_CONFIRMED': '垃圾信息',
-                    'SPAM_REJECTED': '非垃圾信息'
+                    'SPAM_REJECTED': '无效信息'
                 }
                 return statusMap[status] || status
             },

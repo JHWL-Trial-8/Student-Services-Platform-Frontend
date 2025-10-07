@@ -35,8 +35,8 @@
                 <div v-for="ticket in items" :key="ticket.id" class="rounded p-4 mb-3">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
-                            <h3 class="text-lg font-semibold mb-2">{{ ticket.title }}</h3>
-                            <p class="text-gray-600 mb-3">{{ ticket.body }}</p>
+                            <h3 class="text-lg font-semibold mb-2">{{ ticket.title.substring(0, 10) }}</h3>
+                            <p class="text-gray-600 mb-3">{{ ticket.body.substring(0, 10) }}</p>
                             <div class="flex flex-wrap gap-2 mb-2">
                                 <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">
                                     管理员id:{{ ticket.admin_user_id }}
@@ -55,7 +55,7 @@
                 </div>
                 <div class="flex justify-between mt-4 items-center p-2">
                     <button  class="px-4 py-2 border border-gray-300
-                        rounded-md text-gray-700 hover:bg-blue-50" @click="addMessage=true">
+                        rounded-md text-gray-700 hover:bg-blue-50" @click="amessage">
                         添加预设反馈 
                     </button>
                 </div>
@@ -189,6 +189,10 @@
             }
         },
         methods: {
+            amessage(){
+                this.addMessage=true
+                this.completetime=''
+            },
             deleteMessage(id){//删除预设信息
                 this.messageid=id;
                 this.warning=true;
